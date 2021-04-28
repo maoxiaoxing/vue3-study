@@ -1,20 +1,22 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-  <router-link to="home">首页</router-link>
-  <router-view></router-view>
+  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+  <!-- <router-view></router-view> -->
+  <Layout></Layout>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+import Layout from "./components/Layout.vue";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    // HelloWorld,
+    Layout,
   }
 }
 </script>
 
 <style>
-
+@import "./style/index.css"
 </style>
