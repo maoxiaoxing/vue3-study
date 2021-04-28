@@ -23,7 +23,8 @@
     "eslint-plugin-vue": "^7.0.0",
     "node-sass": "^5.0.0",
     "sass": "^1.32.11",
-    "sass-loader": "^11.0.1",
+    "sass-loader": "^7.3.1",
+    "style-loader": "^2.0.0",
     "style-resources-loader": "^1.4.1",
     "vue-cli-plugin-style-resources-loader": "~0.1.5"
   },
