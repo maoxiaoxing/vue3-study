@@ -4,18 +4,32 @@
       毛小星的 Vue3 demo
     </el-header>
     <el-container>
-      <el-aside width="200px">Aside</el-aside>
+      <el-aside width="200px">
+        <Menu
+          :menus="routeStates"
+        ></Menu>
+      </el-aside>
       <el-main>
-        <el-button type="primary">123</el-button>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-export default {
-  setup() {
+import { reactive } from 'vue'
+import Menu from '@/components/Menu/Menu.vue'
+import { routes } from '@/router'
 
+export default {
+  components: {
+    Menu
+  },
+  setup() {
+    const routeStates = reactive(routes)
+    return {
+      routeStates,
+    }
   }
 }
 </script>
