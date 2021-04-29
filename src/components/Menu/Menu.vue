@@ -15,7 +15,7 @@
           <el-menu-item
             :key="item.name"
             :title="item.title"
-            :index="item.name"
+            :index="item.path"
             :icon="item.icon || 'user'"
             :href="item.path"
             @click="menuClick"

@@ -4,18 +4,18 @@ import Setup from '@/pages/compositionAPIDemo/setup.vue'
 
 export const routes = [
   { 
-    path: '/',
+    path: '/home',
     name: 'Home',
     title: '首页',
     component: Home,
   },
   { 
-    path: '/',
+    path: '/demo',
     name: 'CompositionAPIDemo',
     title: 'Composition API Demo',
     children: [
       {
-        path: '/',
+        path: '/demo/setup',
         name: 'Setup',
         title: 'Setup',
         component: Setup,
