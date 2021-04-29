@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-submenu 
-      :title="menu.title"
       :index="menu.name"
     >
+      <template #title>{{ menu.title }}</template>
       <template
         v-for="subItem in menu.children"
       >

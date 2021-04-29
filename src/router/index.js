@@ -1,12 +1,26 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../pages/home/home.vue'
+import Setup from '@/pages/compositionAPIDemo/setup.vue'
 
 export const routes = [
   { 
     path: '/',
     name: 'Home',
     title: '首页',
-    component: Home 
+    component: Home,
+  },
+  { 
+    path: '/',
+    name: 'CompositionAPIDemo',
+    title: 'Composition API Demo',
+    children: [
+      {
+        path: '/',
+        name: 'Setup',
+        title: 'Setup',
+        component: Setup,
+      },
+    ]
   },
 ]
 
