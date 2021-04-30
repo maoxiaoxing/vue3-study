@@ -5,11 +5,9 @@ import Setup from '../pages/compositionAPIDemo/setup.vue'
 import Ref from '../pages/compositionAPIDemo/ref.vue'
 
 export const routes = [
-  { 
-    path: '/home',
-    name: 'Home',
-    title: '首页',
-    component: Home,
+  {
+    path: '/',
+    redirect: '/demo/setup',
   },
   { 
     path: '/demo',

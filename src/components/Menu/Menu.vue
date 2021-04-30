@@ -12,7 +12,7 @@
           ></sub-menus>
         </template>
 
-        <template v-else>
+        <template v-else-if="item.component">
           <el-menu-item
             :key="item.name"
             :title="item.title"
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { watch, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import SubMenus from '@/components/Menu/SubMenu';
 
 export default {
@@ -40,12 +42,15 @@ export default {
       require: true
     }
   },
-  data() {
-    return {
-      activeIndex: 'home'
-    }
-  },
   setup() {
+    const route = useRoute()
+    const activeIndex = ref('/')
+    watch(() => route.path, () => {
+      activeIndex.value = route.path
+    })
+    return {
+      activeIndex,
+    }
   }
 }
 </script>
