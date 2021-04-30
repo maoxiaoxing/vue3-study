@@ -1,22 +1,11 @@
 <template>
-  {{ state.msg }}
+  <div class="project-home">
+    <router-view />
+  </div>
 </template>
 
 <script>
-import { reactive } from "vue";
-
-export default {
-  setup() {
-    const state = reactive({
-      msg: 'home'
-    })
-    return {
-      state,
-    }
+  export default {
+    name: 'Home'
   }
-}
 </script>
-
-<style>
-
-</style>

@@ -17,7 +17,6 @@
           v-else
           :index="subItem.path"
           :key="subItem.name"
-          @click="menuClick"
         >
           {{ subItem.title }}
         </el-menu-item>
@@ -27,7 +26,6 @@
 </template>
 
 <script>
-import { useRouter } from "vue-router"
 export default {
   name: 'SubMenus',
   props: {
@@ -48,17 +46,7 @@ export default {
       // }
     }
   },
-  setup(props, context) {
-    console.log(props, context)
-    const router = useRouter()
-    const menuClick = (menu) => {
-      console.log(menu)
-      console.log(router, 'router')
-      router.push('/demo/setup')
-    }
-    return {
-      menuClick,
-    }
+  setup() {
   }
 }
 </script>

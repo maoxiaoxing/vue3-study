@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+// import Layout from '@/components/Layout'
 import Home from '../pages/home/home.vue'
-import Setup from '@/pages/compositionAPIDemo/setup.vue'
+import Setup from '../pages/compositionAPIDemo/setup.vue'
+import Ref from '../pages/compositionAPIDemo/ref.vue'
 
 export const routes = [
   { 
@@ -13,12 +15,20 @@ export const routes = [
     path: '/demo',
     name: 'CompositionAPIDemo',
     title: 'Composition API Demo',
+    redirect: '/demo/setup',
+    component: Home,
     children: [
       {
         path: '/demo/setup',
         name: 'Setup',
         title: 'Setup',
         component: Setup,
+      },
+      {
+        path: '/demo/ref',
+        name: 'Ref',
+        title: 'Ref',
+        component: Ref,
       },
     ]
   },

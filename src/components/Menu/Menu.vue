@@ -2,6 +2,7 @@
   <div>
     <el-menu 
       :default-active="activeIndex"
+      router
     >
       <template v-for="item in menus">
         <template v-if="item.children && item.children.length > 0">
@@ -18,7 +19,6 @@
             :index="item.path"
             :icon="item.icon || 'user'"
             :href="item.path"
-            @click="menuClick"
           >
             {{ item.title }}
           </el-menu-item>
@@ -46,12 +46,6 @@ export default {
     }
   },
   setup() {
-    const menuClick = (route) => {
-      console.log(route, 'route')
-    }
-    return {
-      menuClick
-    }
   }
 }
 </script>
