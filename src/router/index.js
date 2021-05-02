@@ -5,6 +5,7 @@ import Setup from '../pages/compositionAPIDemo/setup.vue'
 import Ref from '../pages/compositionAPIDemo/ref.vue'
 import Computed from '../pages/compositionAPIDemo/computed.vue'
 import Watch from '../pages/compositionAPIDemo/watch.vue'
+import WatchEffect from '../pages/compositionAPIDemo/watchEffect.vue'
 
 export const routes = [
   {
@@ -41,6 +42,12 @@ export const routes = [
         name: 'Watch',
         title: 'Watch',
         component: Watch,
+      },
+      {
+        path: '/demo/watchEffect',
+        name: 'WatchEffect',
+        title: 'WatchEffect',
+        component: WatchEffect,
       },
     ]
   },
