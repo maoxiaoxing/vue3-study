@@ -14,7 +14,6 @@ import { defineComponent, ref } from 'vue'
 const useCount = () => {
   const count = ref(0)
   const increase = () => {
-    console.log(123)
     count.value++
   }
   return {
