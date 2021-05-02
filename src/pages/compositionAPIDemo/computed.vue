@@ -15,19 +15,27 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button 
-              type="primary" 
+              type="text" 
               v-if="!scope.row.completed"
               @click="toggleCompleted(scope.row)"
             >标记完成</el-button>
             <el-button 
-              type="danger" 
+              type="text" 
               v-else
               @click="toggleCompleted(scope.row)"
             >标记未完成</el-button>
-            <el-button 
-              type="danger"
-              @click="delTodo(scope)"
-            >删除</el-button>
+            <el-popconfirm
+              title="确定删除吗？"
+              confirmButtonText="确定"
+              cancelButtonText="取消"
+              @confirm="delTodo(scope)"
+            >
+              <template #reference>
+                <el-button 
+                  type="text"
+                >删除</el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -77,7 +85,8 @@ const useTodo = () => {
 
   const delTodo = (scope) => {
     console.log(scope)
-    // const { $index } = scope
+    const { $index } = scope
+    todos.splice($index, 1)
   }
 
   return {
