@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../pages/home/home.vue'
 import Setup from '../pages/compositionAPIDemo/setup.vue'
 import Ref from '../pages/compositionAPIDemo/ref.vue'
+import Computed from '../pages/compositionAPIDemo/computed.vue'
 
 export const routes = [
   {
@@ -27,6 +28,12 @@ export const routes = [
         name: 'Ref',
         title: 'Ref',
         component: Ref,
+      },
+      {
+        path: '/demo/computed',
+        name: 'Computed',
+        title: 'Computed',
+        component: Computed,
       },
     ]
   },
