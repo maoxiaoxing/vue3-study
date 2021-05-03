@@ -11,10 +11,10 @@ import todoList from '@/pages/todoList/todoList'
 export const routes = [
   {
     path: '/',
-    redirect: '/demo/setup',
+    redirect: '/todo',
   },
   {
-    path: '/todoList',
+    path: '/todo',
     name: 'todoList',
     title: 'todoList',
     component: todoList,

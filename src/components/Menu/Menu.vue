@@ -18,7 +18,6 @@
             :title="item.title"
             :index="item.path"
             :icon="item.icon || 'user'"
-            :href="item.path"
           >
             {{ item.title }}
           </el-menu-item>
@@ -44,8 +43,9 @@ export default {
   },
   setup() {
     const route = useRoute()
-    const activeIndex = ref('/')
-    watch(() => route.path, () => {
+    const activeIndex = ref('')
+    watch(() => route.path, (val) => {
+      console.log(val, 'path')
       activeIndex.value = route.path
     })
     return {

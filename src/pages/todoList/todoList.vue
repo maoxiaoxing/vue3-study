@@ -2,14 +2,14 @@
   <section id="app" class="todoapp">
     <header class="header">
       <h1>todos</h1>
-      <input
+      <el-input
         class="new-todo"
         placeholder="What needs to be done?"
         autocomplete="off"
         autofocus
         v-model="input"
         @keyup.enter="addTodo"
-        >
+      />
     </header>
     <section class="main" v-show="count">
       <input id="toggle-all" class="toggle-all" v-model="allDone" type="checkbox">
@@ -42,9 +42,12 @@
         <strong>{{ remainingCount }}</strong> {{ remainingCount > 1 ? 'items' : 'item' }} left
       </span>
       <ul class="filters">
-        <li><a href="#/all">All</a></li>
-        <li><a href="#/active">Active</a></li>
-        <li><a href="#/completed">Completed</a></li>
+        <li 
+          v-for="typeInfo in typeList"
+          :key="`type_${typeInfo.value}`"
+          :class="[type === typeInfo.value ? 'selected' : '']"
+          @click="typeChange(typeInfo.value)"
+        >{{ typeInfo.text }}</li>
       </ul>
       <button class="clear-completed" @click="removeCompleted" v-show="count > remainingCount">
         Clear completed
@@ -56,7 +59,7 @@
     <!-- Remove the below line ↓ -->
     <p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
     <!-- Change this out with your name and url ↓ -->
-    <p>Created by <a href="https://www.lagou.com">教瘦</a></p>
+    <p>Created by <a href="https://www.lagou.com">毛小星</a></p>
     <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
   </footer>
 </template>
@@ -64,7 +67,7 @@
 <script>
 import '@/style/pages/todoList/todoList.scss'
 import useLocalStorage from '@/utils/useLocalStorage'
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watchEffect, reactive } from 'vue'
 
 const storage = useLocalStorage()
 
@@ -141,6 +144,12 @@ const useFilter = todos => {
     }
   })
 
+  const typeList = reactive([
+    { value: 'all', text: 'All' },
+    { value: 'active', text: 'Active' },
+    { value: 'completed', text: 'Completed' },
+  ])
+
   const filter = {
     all: list => list,
     active: list => list.filter(todo => !todo.completed),
@@ -151,30 +160,18 @@ const useFilter = todos => {
   const remainingCount = computed(() => filter.active(todos.value).length)
   const count = computed(() => todos.value.length)
 
-  const onHashChange = () => {
-    const hash = window.location.hash.replace('#/', '')
-    if (filter[hash]) {
-      type.value = hash
-    } else {
-      type.value = 'all'
-      window.location.hash = ''
-    }
+  const typeChange = (val) => {
+    type.value = val
   }
-
-  onMounted(() => {
-    window.addEventListener('hashchange', onHashChange)
-    onHashChange()
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener('hashchange', onHashChange)
-  })
 
   return {
     allDone,
     count,
+    type,
     filteredTodos,
-    remainingCount
+    remainingCount,
+    typeChange,
+    typeList,
   }
 }
 
