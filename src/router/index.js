@@ -6,11 +6,18 @@ import Ref from '../pages/compositionAPIDemo/ref.vue'
 import Computed from '../pages/compositionAPIDemo/computed.vue'
 import Watch from '../pages/compositionAPIDemo/watch.vue'
 import WatchEffect from '../pages/compositionAPIDemo/watchEffect.vue'
+import todoList from '@/pages/todoList/todoList'
 
 export const routes = [
   {
     path: '/',
     redirect: '/demo/setup',
+  },
+  {
+    path: '/todoList',
+    name: 'todoList',
+    title: 'todoList',
+    component: todoList,
   },
   { 
     path: '/demo',
@@ -51,6 +58,12 @@ export const routes = [
       },
     ]
   },
+  // {
+  //   path: '/todoList',
+  //   name: 'todoList',
+  //   title: 'todoList',
+  //   component: todoList,
+  // },
 ]
 
 const router = createRouter({
