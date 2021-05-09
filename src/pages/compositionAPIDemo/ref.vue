@@ -10,9 +10,9 @@
     <p>count：{{ count }}</p>
     <p>uncount: {{ uncount }}</p>
 
-  <p>
-    ----- toref -----
-  </p>
+    <p>
+      ----- toref -----
+    </p>
     <el-button 
       type="primary"
       @click="toggleFoo"
@@ -20,6 +20,16 @@
     <p>fooToRef：{{ fooToRef }}</p>
     <p>foo: {{ fooState.foo }}</p>
     <p>fooRef: {{ fooRef.foo }}</p>
+
+    <p>
+      ----- torefs -----
+    </p>
+    <el-button 
+      type="primary"
+      @click="changeState"
+    >切换foo</el-button>
+    <p>foo: {{ foo }}</p>
+    <p>fooRef: {{ bar }}</p>
   </div>
 </template>
 
@@ -65,12 +75,33 @@ const useFoo = () => {
   }
 }
 
+const useFeature = () => {
+  const state = reactive({
+    foo: 1,
+    bar: 1,
+  })
+  let { bar } = state
+  let { foo } = toRefs(state)
+
+  const changeState = () => {
+    bar++
+    foo.value++
+  }
+
+  return {
+    bar,
+    foo,
+    changeState,
+  }
+}
+
 const refDemo = defineComponent({
   setup() {
 
     return {
       ...useCount(),
       ...useFoo(),
+      ...useFeature(),
     }
   }
 })
