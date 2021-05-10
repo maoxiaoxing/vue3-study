@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, unref, toRef, toRefs } from 'vue'
+import { defineComponent, reactive, ref, unref, toRef, toRefs, isRef } from 'vue'
 
 const useCount = () => {
   const count = ref(0)
@@ -58,7 +58,9 @@ const useFoo = () => {
     foo: true
   }
   const fooRef = ref(fooState)
+  console.log(isRef(fooRef), 'fooRef isRef')
   let fooToRef = toRef(fooState, 'foo')
+  console.log(isRef(fooToRef), 'fooToRef isRef')
   console.log(fooRef)
 
   const toggleFoo = () => {
@@ -82,6 +84,7 @@ const useFeature = () => {
   })
   let { bar } = state
   let { foo } = toRefs(state)
+  console.log(isRef(bar), isRef(foo), 'bar foo isRef')
 
   const changeState = () => {
     bar++
