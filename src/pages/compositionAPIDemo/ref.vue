@@ -30,11 +30,18 @@
     >切换foo</el-button>
     <p>foo: {{ foo }}</p>
     <p>fooRef: {{ bar }}</p>
+
+    <p>
+      ----- customRef -----
+    </p>
+    <el-input v-model="delayText" placeholder=""></el-input>
+    <p>delayText: {{ delayText }}</p>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, unref, toRef, toRefs, isRef } from 'vue'
+import { defineComponent, reactive, ref, unref, toRef, toRefs, isRef, computed, watch } from 'vue'
+import { useDebouncedRef } from '@/utils/customRef'
 
 const useCount = () => {
   const count = ref(0)
@@ -98,6 +105,15 @@ const useFeature = () => {
   }
 }
 
+const useDelayText = () => {
+  const text = ref('')
+  const delayText = useDebouncedRef('', 1000)
+
+  return {
+    delayText,
+  }
+}
+
 const refDemo = defineComponent({
   setup() {
 
@@ -105,6 +121,7 @@ const refDemo = defineComponent({
       ...useCount(),
       ...useFoo(),
       ...useFeature(),
+      ...useDelayText(),
     }
   }
 })
