@@ -34,7 +34,7 @@
     <p>
       ----- customRef -----
     </p>
-    <el-input v-model="delayText" placeholder=""></el-input>
+    <el-input v-model="text" placeholder=""></el-input>
     <p>delayText: {{ delayText }}</p>
   </div>
 </template>
@@ -108,8 +108,12 @@ const useFeature = () => {
 const useDelayText = () => {
   const text = ref('')
   const delayText = useDebouncedRef('', 1000)
+  watch(text, (val) => {
+    delayText.value = val
+  })
 
   return {
+    text,
     delayText,
   }
 }
