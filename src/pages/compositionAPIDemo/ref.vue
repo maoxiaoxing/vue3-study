@@ -36,11 +36,20 @@
     </p>
     <el-input v-model="text" placeholder=""></el-input>
     <p>delayText: {{ delayText }}</p>
+
+    <p>
+      ----- shallowRef -----
+    </p>
+    <el-button 
+      type="primary"
+      @click="changeSallowData"
+    >切换shallowData</el-button>
+    <p>delayText: {{ shallowData }}</p>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, unref, toRef, toRefs, isRef, computed, watch } from 'vue'
+import { defineComponent, reactive, ref, unref, toRef, toRefs, isRef, computed, watch, shallowRef } from 'vue'
 import { useDebouncedRef } from '@/utils/customRef'
 
 const useCount = () => {
@@ -118,6 +127,21 @@ const useDelayText = () => {
   }
 }
 
+const useShallow = () => {
+  const shallowData = shallowRef(true)
+  shallowData.value = false
+  console.log(shallowData.value, 'data')
+
+  const changeSallowData = () => {
+    shallowData.value = !shallowData.value
+  }
+
+  return {
+    shallowData,
+    changeSallowData,
+  }
+}
+
 const refDemo = defineComponent({
   setup() {
 
@@ -126,6 +150,7 @@ const refDemo = defineComponent({
       ...useFoo(),
       ...useFeature(),
       ...useDelayText(),
+      ...useShallow(),
     }
   }
 })
