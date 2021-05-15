@@ -7,6 +7,7 @@ import Computed from '../pages/compositionAPIDemo/computed.vue'
 import Watch from '../pages/compositionAPIDemo/watch.vue'
 import WatchEffect from '../pages/compositionAPIDemo/watchEffect.vue'
 import todoList from '@/pages/todoList/todoList'
+import LifeCycle from '@/pages/compositionAPIDemo/lifeCycle'
 
 export const routes = [
   {
@@ -31,6 +32,12 @@ export const routes = [
         name: 'Setup',
         title: 'Setup',
         component: Setup,
+      },
+      {
+        path: '/demo/lifeCycle',
+        name: 'LifeCycle',
+        title: 'LifeCycle',
+        component: LifeCycle,
       },
       {
         path: '/demo/ref',
