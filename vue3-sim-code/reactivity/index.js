@@ -69,3 +69,26 @@ export function trigger (target, key) {
     })
   }
 }
+
+export function ref (raw) {
+  if (isObject(raw) && raw._v_isRef) {
+    return
+  }
+
+  let value = convert(raw)
+  const r = {
+    _v_isRef: true,
+    get value () {
+      track(r, 'value')
+      return value
+    },
+    set value (newValue) {
+      if (newValue !== value) {
+        raw = newValue
+        value = convert(raw)
+        trigger(r, 'value')
+      }
+    }
+  }
+  return r
+}
