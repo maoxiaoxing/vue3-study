@@ -19,6 +19,7 @@ export function reactive (target) {
       let result = true
       if (oldValue !== value) {
         result = Reflect.set(target, key, value, receiver)
+        trigger(target, key)
       }
       return true
     },
@@ -26,7 +27,8 @@ export function reactive (target) {
       const hadKey = hasOwn(target, key)
       const result = Reflect.deleteProperty(target, key)
       if (hadKey && result) {
-        console.log('del', key)
+        // console.log('del', key)
+        trigger(target, key)
       }
       return result
     }
@@ -55,4 +57,15 @@ export function track (target, key) {
     depsMap.set(key, (dep = new Set()))
   }
   dep.add(activeEffect)
+}
+
+export function trigger (target, key) {
+  const depsMap = targetMap.get(target)
+  if (!depsMap) return
+  const dep = depsMap.get(key)
+  if (dep) {
+    dep.forEach((effect) => {
+      effect()
+    })
+  }
 }

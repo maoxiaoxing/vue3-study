@@ -9,7 +9,7 @@
 <body>
   
   <script type="module">
-    import { reactive } from './reactivity/index.js'
+    import { reactive, effect } from './reactivity/index.js'
     const obj = reactive({
       name: 'mxx',
       age: 26,
@@ -17,6 +17,22 @@
     obj.name = 'kk'
     delete obj.age
     console.log(obj)
+    const product = reactive({
+      name: 'iphone',
+      price: 5000,
+      count: 3
+    })
+    let total = 0
+    effect(() => {
+      total = product.price * product.count
+    })
+    console.log(total)
+
+    product.price = 3000
+    console.log(total)
+    
+    product.count = 1
+    console.log(total)
   </script>
 </body>
 </html>
