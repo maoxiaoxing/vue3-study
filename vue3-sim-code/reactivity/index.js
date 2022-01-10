@@ -11,7 +11,7 @@ export function reactive (target) {
   const handler = {
     get (target, key, receiver) {
       const result = Reflect.get(target, key, receiver)
-
+      track(target, key)
       return convert(result)
     },
     set (target, key, value, receiver) {
@@ -33,4 +33,26 @@ export function reactive (target) {
   }
 
   return new Proxy(target, handler)
+}
+
+let activeEffect = null
+export function effect (callback) {
+  activeEffect = callback
+  callback() // 访问响应式对象属性，收集依赖
+  activeEffect = null
+}
+
+let targetMap = new WeakMap()
+
+export function track (target, key) {
+  if (!activeEffect) return
+  let depsMap = targetMap.get(target)
+  if (!depsMap) {
+    targetMap.set(target, (depsMap = new Map()))
+  }
+  let dep = depsMap.get(key)
+  if (!dep) {
+    depsMap.set(key, (dep = new Set()))
+  }
+  dep.add(activeEffect)
 }
