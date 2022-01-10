@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <script type="module">
+    import { reactive, effect, ref, toRefs } from './reactivity/index.js'
+    
+    function useProduct () {
+      const product = reactive({
+        name: 'iphone',
+        price: 5000,
+        count: 3
+      })
+      return toRefs(product)
+    }
+
+    const product = useProduct()
+    // console.log(product.price)
+
+    const { price, count } = useProduct()
+
+    let total = 0
+    effect(() => {
+      total = price.value * count.value
+    })
+    console.log(total)
+
+    price.value = 3000
+    console.log(total)
+
+    count.value = 1
+    console.log(total)
+  </script>
+</body>
+</html>

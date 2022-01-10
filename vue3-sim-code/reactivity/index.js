@@ -92,3 +92,25 @@ export function ref (raw) {
   }
   return r
 }
+
+export function toRefs (proxy) {
+  const ret = proxy instanceof Array ? new Array(proxy.length) : {}
+
+  for (const key in proxy) {
+    ret[key] = toProxyRef(proxy, key)
+  }
+  return ret
+}
+
+function toProxyRef (proxy, key) {
+  const r = {
+    _v_isRef: true,
+    get value () {
+      return proxy[key]
+    },
+    set value (newValue) {
+      proxy[key] = newValue
+    }
+  }
+  return r
+}
