@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   msg: {
@@ -15,11 +15,13 @@ const props = defineProps({
     default: ''
   }
 })
+const emits = defineEmits(['increment'])
 
 const count = ref(0)
 const increment = () => {
   console.log(props.msg)
   count.value++
+  emits('increment')
 }
 </script>
 
