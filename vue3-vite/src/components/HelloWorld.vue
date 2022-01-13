@@ -12,7 +12,7 @@ import { ref, defineProps, defineEmits } from 'vue'
 const props = defineProps({
   msg: {
     type: String,
-    default: ''
+    default: '',
   }
 })
 const emits = defineEmits(['increment'])

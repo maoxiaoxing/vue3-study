@@ -1,7 +1,13 @@
 module.exports = {
     "env": {
         "browser": true,
-        "es2021": true
+        'es2021': true
+    },
+    "dlobals": {
+        defineEmits: "readonly",
+        defineProps: 'readonly',
+        defineExpose: 'readonly',
+        withDefaults: 'readonly',
     },
     "extends": [
         "plugin:vue/vue3-strongly-recommended",
@@ -17,5 +23,6 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
+        "no-unused-vars": "off"
     }
 }
