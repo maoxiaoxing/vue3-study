@@ -4,10 +4,12 @@
   <button @click="increment">
     increment
   </button>
+  <Foo msg="foo" />
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
+import Foo from "./foo";
 
 const props = defineProps({
   msg: {
