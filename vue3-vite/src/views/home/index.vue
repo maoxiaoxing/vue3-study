@@ -1,5 +1,7 @@
 <template>
-  首页
+  <h1>首页</h1>
+  <div class="home">999</div>
+  
   {{$store.state.count}}
 </template>
 
@@ -10,4 +12,8 @@
   console.log(store.state.count)
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+  .home {
+    color: $color;
+  }
+</style>
