@@ -12,7 +12,8 @@
     "isolatedModules": true,
     "types": ["vite/client"],
     "lib": ["esnext", "dom"],
-    "path": {
+    "baseUrl": "./",
+    "paths": {
       "@/*": [
         "src/*"
       ]

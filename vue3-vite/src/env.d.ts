@@ -7,4 +7,4 @@ declare module '*.vue' {
   export default component
 }
 
-declare module '@/utils/request'
+// declare module '@/utils/request'

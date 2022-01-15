@@ -1,9 +1,10 @@
-import request from '@/utils/request'
+import request from '../utils/request'
+import { ILoginInfo } from './types/common'
 
 export const getLoginInfo = () => {
-  // return request({
-  //   method: 'GET',
-  //   url: '/login/info'
-  // })
-  return request.get('/login/info')
+  return request<ILoginInfo>({
+    method: 'GET',
+    url: '/login/info',
+  })
+  // return request.get('/login/info')
 }
