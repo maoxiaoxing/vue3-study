@@ -8,3 +8,10 @@ export const getLoginInfo = () => {
   })
   // return request.get('/login/info')
 }
+
+export const logout = () => {
+  return request({
+    method: 'GET',
+    url: '/setting/admin/logout'
+  })
+}
