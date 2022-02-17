@@ -13,6 +13,7 @@ const streamToString = (stream) => {
   })
 }
 
+// 静态文件服务器
 app.use(async (ctx, next) => {
   await send(ctx, ctx.path, {
     root: process.cwd(),
@@ -21,6 +22,7 @@ app.use(async (ctx, next) => {
   await next()
 })
 
+// 修改第三方模块的路径
 app.use(async (ctx, next) => {
   if (ctx.type === 'application/javascript') {
     const contents = await streamToString(ctx.body)
