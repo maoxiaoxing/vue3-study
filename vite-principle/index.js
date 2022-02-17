@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const koa = require('koa')
 const send = require('koa-send')
+const path = require('path')
 
 const app = new koa()
 
@@ -12,6 +13,17 @@ const streamToString = (stream) => {
     stream.on('error', reject)
   })
 }
+
+// 加载第三方模块
+app.use(async (ctx, next) => {
+  if (ctx.path.startsWith('/@modules/')) {
+    const moduleName = ctx.path.substr(10)
+    const pkgPath = path.join(process.cwd(), 'node_modules', moduleName, 'package.json')
+    const pkg = require(pkgPath)
+    ctx.path = path.join('/node_modules', moduleName, pkg.module)
+  }
+  await next()
+})
 
 // 静态文件服务器
 app.use(async (ctx, next) => {
