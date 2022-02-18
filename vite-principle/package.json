@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vue/compiler-sfc": "^3.2.31",
     "koa": "^2.13.4",
     "koa-send": "^5.0.1"
   }
