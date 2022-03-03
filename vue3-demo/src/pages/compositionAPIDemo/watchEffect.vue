@@ -8,11 +8,15 @@
 
 <script>
 import { watchEffect, ref } from 'vue'
+import { useStore } from 'vuex'
 
 const useCount = () => {
   const count = ref(0)
+  const store = useStore()
 
   const increase = () => {
+    store.commit('increment', 1)
+    console.log(store.getters.getState)
     count.value++
   }
 
