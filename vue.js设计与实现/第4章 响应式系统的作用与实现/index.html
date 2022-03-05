@@ -12,6 +12,21 @@
   <script type="module">
     import { reactive, effect } from './reactivity/index.js'
 
+    const jobQueue = new Set()
+    const p = Promise.resolve()
+
+    let isFlushing = false
+    function flushJob() {
+      if (isFlushing) return
+
+      isFlushing = true
+      p.then(() => {
+        jobQueue.forEach(job => job())
+      }).finally(() => {
+        isFlushing = false
+      })
+    }
+
     const data = {
       ok: true,
       text: 'hello vue',
@@ -26,7 +41,9 @@
       app.innerHTML = obj.ok ? obj.text : 'not'
     }, {
       scheduler (fn) {
-        setTimeout(fn)
+        // setTimeout(fn)
+        jobQueue.add(fn)
+        flushJob()
       }
     })
     // obj.text = 'i'
@@ -35,6 +52,7 @@
       console.log(obj.foo, 'foo')
     })
 
+    obj.foo++
     obj.foo++
     
     console.log('end')
