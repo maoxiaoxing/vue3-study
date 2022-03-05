@@ -40,7 +40,7 @@ export function reactive (target) {
 let activeEffect = null
 const effectStack = []
 
-export function effect (callback) {
+export function effect (callback, options = {}) {
   const effectFn = () => {
     cleanup(effectFn)
     activeEffect = effectFn
@@ -49,6 +49,7 @@ export function effect (callback) {
     effectStack.pop()
     activeEffect = effectStack[effectStack.length - 1]
   }
+  effectFn.options = options
   effectFn.deps = []
   effectFn()
 }
@@ -77,16 +78,22 @@ export function trigger (target, key) {
   const effects = depsMap.get(key)
   const effectsToRun = new Set()
   if (effects) {
-    effects.forEach((effect) => {
+    effects.forEach((effectFn) => {
       // 如果 trigger 触发执行的副作用函数与当前正在执行的副作用函数相同，则不触发执行
       // 避免无限递归执行
-      if (effect !== activeEffect) {
+      if (effectFn !== activeEffect) {
         effectsToRun.add(effectFn)
       }
     })
   }
   
-  effectsToRun.forEach((effect) => effect())
+  effectsToRun.forEach((effectFn) => {
+    if (effectFn.options.scheduler) {
+      effectFn.options.scheduler(effectFn)
+    } else {
+      effectFn()
+    }
+  })
   // if (effects) {
   //   effects.forEach((effect) => {
   //     effect()
