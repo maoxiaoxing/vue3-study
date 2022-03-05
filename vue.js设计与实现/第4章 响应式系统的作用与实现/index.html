@@ -14,11 +14,13 @@
 
     const data = {
       ok: true,
-      text: 'hello vue'
+      text: 'hello vue',
+      foo: 0,
     }
     const obj = reactive(data)
     const app = document.querySelector('#app')
     effect(() => {
+      console.log(obj.foo++)
       // obj.ok = false
       console.log('updated')
       app.innerHTML = obj.ok ? obj.text : 'not'

@@ -75,7 +75,17 @@ export function trigger (target, key) {
   const depsMap = targetMap.get(target)
   if (!depsMap) return
   const effects = depsMap.get(key)
-  const effectsToRun = new Set(effects)
+  const effectsToRun = new Set()
+  if (effects) {
+    effects.forEach((effect) => {
+      // 如果 trigger 触发执行的副作用函数与当前正在执行的副作用函数相同，则不触发执行
+      // 避免无限递归执行
+      if (effect !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
+  }
+  
   effectsToRun.forEach((effect) => effect())
   // if (effects) {
   //   effects.forEach((effect) => {
