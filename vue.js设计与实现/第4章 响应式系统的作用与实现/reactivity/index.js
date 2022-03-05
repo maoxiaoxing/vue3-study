@@ -44,10 +44,10 @@ export function effect (callback) {
   const effectFn = () => {
     cleanup(effectFn)
     activeEffect = effectFn
-    // effectStack.push(effectFn)
+    effectStack.push(effectFn)
     callback() // 访问响应式对象属性，收集依赖
-    // effectStack.pop()
-    // activeEffect = effectStack[effectStack.length - 1]
+    effectStack.pop()
+    activeEffect = effectStack[effectStack.length - 1]
   }
   effectFn.deps = []
   effectFn()
