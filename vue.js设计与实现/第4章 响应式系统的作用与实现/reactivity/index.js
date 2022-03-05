@@ -38,10 +38,19 @@ export function reactive (target) {
 }
 
 let activeEffect = null
+const effectStack = []
+
 export function effect (callback) {
-  activeEffect = callback
-  callback() // 访问响应式对象属性，收集依赖
-  activeEffect = null
+  const effectFn = () => {
+    cleanup(effectFn)
+    activeEffect = effectFn
+    // effectStack.push(effectFn)
+    callback() // 访问响应式对象属性，收集依赖
+    // effectStack.pop()
+    // activeEffect = effectStack[effectStack.length - 1]
+  }
+  effectFn.deps = []
+  effectFn()
 }
 
 let targetMap = new WeakMap()
@@ -52,22 +61,36 @@ export function track (target, key) {
   if (!depsMap) {
     targetMap.set(target, (depsMap = new Map()))
   }
-  let dep = depsMap.get(key)
-  if (!dep) {
-    depsMap.set(key, (dep = new Set()))
+  let deps = depsMap.get(key)
+  if (!deps) {
+    depsMap.set(key, (deps = new Set()))
   }
-  dep.add(activeEffect)
+  // 把当前激活的副作用函数添加到依赖集合 deps 中
+  deps.add(activeEffect)
+  // 将其添加到 activeEffect.deps 数组中
+  activeEffect.deps.push(deps)
 }
 
 export function trigger (target, key) {
   const depsMap = targetMap.get(target)
   if (!depsMap) return
-  const dep = depsMap.get(key)
-  if (dep) {
-    dep.forEach((effect) => {
-      effect()
-    })
+  const effects = depsMap.get(key)
+  const effectsToRun = new Set(effects)
+  effectsToRun.forEach((effect) => effect())
+  // if (effects) {
+  //   effects.forEach((effect) => {
+  //     effect()
+  //   })
+  // }
+}
+
+function cleanup (effectFn) {
+  for (let i = 0; i < effectFn.deps.length; i++) {
+    const deps = effectFn.deps[i]
+    console.log(deps)
+    deps.delete(effectFn)
   }
+  effectFn.deps.length = 0
 }
 
 // export function ref (raw) {
