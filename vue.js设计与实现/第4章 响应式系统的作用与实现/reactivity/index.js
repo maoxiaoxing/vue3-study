@@ -188,3 +188,22 @@ export function computed (getter) {
   }
   return obj
 }
+
+export function watch (source, cb) {
+  effect(() => traverse(source), {
+    scheduler() {
+      cb()
+    }
+  })
+}
+
+function traverse(value, seen = new Set()) {
+  if (typeof value !== 'object' || value === null || seen.has(value)) {
+    return
+  }
+  seen.add(value)
+  for (const k in value) {
+    traverse(value[k], seen)
+  }
+  return value
+}
