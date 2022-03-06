@@ -24,12 +24,18 @@
     // })
     // obj.foo = 1
 
-    watch(
-      () => obj.foo,
-      (newval, oldVal) => {
-        console.log(newval, oldVal)
-      }
-    )
+    // watch(
+    //   () => obj.foo,
+    //   (newval, oldVal) => {
+    //     console.log(newval, oldVal)
+    //   }
+    // )
+
+    watch(obj, () => {
+      console.log('update')
+    }, {
+      immediate: true
+    })
 
     obj.foo++
     
