@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script type="module">
+    import { reactive, effect, computed } from './reactivity/index.js'
+
+    const data = {
+      foo: 0,
+      bar: 1,
+    }
+
+    const obj = reactive(data)
+
+    const effectFn = effect(() => {
+      // console.log(obj.foo)
+      return obj.foo + obj.bar
+    }, {
+      lazy: true,
+    })
+
+    const value = effectFn()
+    console.log(value)
+
+    const sumRes = computed(() => obj.foo + obj.bar)
+    console.log(sumRes.value)
+    obj.foo++
+    console.log(sumRes.value)
+
+    effect(() => {
+      console.log(sumRes.value)
+    })
+
+
+  </script>
+</body>
+</html>

@@ -45,13 +45,18 @@ export function effect (callback, options = {}) {
     cleanup(effectFn)
     activeEffect = effectFn
     effectStack.push(effectFn)
-    callback() // 访问响应式对象属性，收集依赖
+    const res = callback() // 访问响应式对象属性，收集依赖
     effectStack.pop()
     activeEffect = effectStack[effectStack.length - 1]
+    return res
   }
   effectFn.options = options
   effectFn.deps = []
-  effectFn()
+  if (!options.lazy) {
+    effectFn()
+  }
+  // effectFn()
+  return effectFn
 }
 
 let targetMap = new WeakMap()
@@ -155,10 +160,31 @@ function cleanup (effectFn) {
 //   return r
 // }
 
-// export function computed (getter) {
-//   const result = ref()
-//   effect(() => {
-//     result.value = getter()
-//   })
-//   return result
-// }
+export function computed (getter) {
+  // 用来缓存上一次计算值
+  let value
+  // 标志时候需要重新计算值
+  let dirty = true
+  const effectFn = effect(getter, { 
+    lazy: true,
+    scheduler() {
+      if (!dirty) {
+        dirty = true
+        // 当计算属性依赖的响应式数据变化时，手动调用 trigger 函数触发响应
+        trigger(obj, 'value')
+      }
+    }
+  })
+  const obj = {
+    get value () {
+      if (dirty) {
+        value = effectFn()
+        dirty = false
+      }
+      // 当读取 value 时，调用 track 函数进行追踪
+      track(obj, 'value')
+      return value
+    }
+  }
+  return obj
+}
