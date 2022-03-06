@@ -19,11 +19,19 @@
 
     const obj = reactive(data)
 
-    watch(obj, () => {
-      console.log('update')
-    })
-    obj.foo = 1
+    // watch(obj, () => {
+    //   console.log('update')
+    // })
+    // obj.foo = 1
 
+    watch(
+      () => obj.foo,
+      (newval, oldVal) => {
+        console.log(newval, oldVal)
+      }
+    )
+
+    obj.foo++
     
 
 

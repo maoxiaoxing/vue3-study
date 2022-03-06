@@ -190,11 +190,23 @@ export function computed (getter) {
 }
 
 export function watch (source, cb) {
-  effect(() => traverse(source), {
+  let getter
+  if (typeof source === 'function') {
+    getter = source
+  } else {
+    getter = () => traverse(source)
+  }
+  let oldValue
+  let newValue
+  const effectFn = effect(() => getter(), {
+    lazy: true,
     scheduler() {
-      cb()
+      newValue = effectFn()
+      cb(newValue, oldValue)
+      oldValue = newValue
     }
   })
+  oldValue = effectFn()
 }
 
 function traverse(value, seen = new Set()) {
