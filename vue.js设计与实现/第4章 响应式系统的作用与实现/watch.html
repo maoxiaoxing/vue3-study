@@ -31,10 +31,12 @@
     //   }
     // )
 
-    watch(obj, () => {
+    watch(obj, (oldValue, newValue) => {
+      console.log(oldValue, newValue)
       console.log('update')
     }, {
-      immediate: true
+      // immediate: true,
+      flush: 'post'
     })
 
     obj.foo++

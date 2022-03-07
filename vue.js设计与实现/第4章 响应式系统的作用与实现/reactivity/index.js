@@ -206,7 +206,14 @@ export function watch (source, cb, options = {}) {
   }
   const effectFn = effect(() => getter(), {
     lazy: true,
-    scheduler: job,
+    scheduler: () => {
+      if (options.flush === 'post') {
+        const p = Promise.resolve()
+        p.then(job)
+      } else {
+        job()
+      }
+    },
   })
   if (options.immediate) {
     job()
