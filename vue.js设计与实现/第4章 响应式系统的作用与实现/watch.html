@@ -31,15 +31,50 @@
     //   }
     // )
 
-    watch(obj, (oldValue, newValue) => {
-      console.log(oldValue, newValue)
-      console.log('update')
+    // watch(obj, (oldValue, newValue) => {
+    //   console.log(oldValue, newValue)
+    //   console.log('update')
+    // }, {
+    //   // immediate: true,
+    //   flush: 'post'
+    // })
+
+
+    const fetch = (data) => {
+      const dataMap = new Map([
+        [1, '西瓜'],
+        [2, '苹果'],
+        [3, '香蕉'],
+      ])
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(dataMap.get(data))
+        }, 1000 * Math.random() * 10)
+      })
+    }
+
+    let finalData
+    watch(obj, async (oldValue, newValue, onInvalidate) => {
+      let expired = false
+      onInvalidate(() => {
+        expired = true
+      })
+      const data = await fetch(obj.foo)
+      if (!expired) {
+        finalData = data
+        console.log(finalData, 'finalData')
+      }
+      console.log(data)
     }, {
       // immediate: true,
       flush: 'post'
     })
 
     obj.foo++
+    setTimeout(() => {
+      obj.foo++
+    })
+
     
 
 
