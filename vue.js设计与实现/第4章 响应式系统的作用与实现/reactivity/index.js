@@ -109,7 +109,6 @@ export function trigger (target, key) {
 function cleanup (effectFn) {
   for (let i = 0; i < effectFn.deps.length; i++) {
     const deps = effectFn.deps[i]
-    console.log(deps)
     deps.delete(effectFn)
   }
   effectFn.deps.length = 0
