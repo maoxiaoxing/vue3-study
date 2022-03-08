@@ -4,6 +4,10 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
 
 const ITERATE_KEY = Symbol()
+const TriggerType = {
+  SET: 'SET',
+  ADD: 'ADD',
+}
 
 export function reactive (target) {
   if (!isObject(target)) {
@@ -17,11 +21,12 @@ export function reactive (target) {
       return convert(result)
     },
     set (target, key, value, receiver) {
+      const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
       const oldValue = Reflect.get(target, key, receiver)
       let result = true
       if (oldValue !== value) {
         result = Reflect.set(target, key, value, receiver)
-        trigger(target, key)
+        trigger(target, key, type)
       }
       return result
     },
@@ -83,12 +88,10 @@ export function track (target, key) {
   activeEffect.deps.push(deps)
 }
 
-export function trigger (target, key) {
+export function trigger (target, key, type) {
   const depsMap = targetMap.get(target)
   if (!depsMap) return
   const effects = depsMap.get(key)
-  // 获取与 ITERATE_KEY 相关联的副作用函数
-  const iterateEffects = depsMap.get(ITERATE_KEY)
   const effectsToRun = new Set()
   if (effects) {
     effects.forEach((effectFn) => {
@@ -100,12 +103,16 @@ export function trigger (target, key) {
     })
   }
 
-  if (iterateEffects) {
-    iterateEffects.forEach((effectFn) => {
-      if (effectFn !== activeEffect) {
-        effectsToRun.add(effectFn)
-      }
-    })
+  if (type === TriggerType.ADD) {
+    // 获取与 ITERATE_KEY 相关联的副作用函数
+    const iterateEffects = depsMap.get(ITERATE_KEY)
+    if (iterateEffects) {
+      iterateEffects.forEach((effectFn) => {
+        if (effectFn !== activeEffect) {
+          effectsToRun.add(effectFn)
+        }
+      })
+    }
   }
   
   effectsToRun.forEach((effectFn) => {
