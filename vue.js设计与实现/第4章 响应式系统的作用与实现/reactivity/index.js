@@ -7,6 +7,7 @@ const ITERATE_KEY = Symbol()
 const TriggerType = {
   SET: 'SET',
   ADD: 'ADD',
+  DELETE: 'DELETE',
 }
 
 export function reactive (target) {
@@ -35,7 +36,7 @@ export function reactive (target) {
       const result = Reflect.deleteProperty(target, key)
       if (hadKey && result) {
         // console.log('del', key)
-        trigger(target, key)
+        trigger(target, key, TriggerType.DELETE)
       }
       return result
     },
@@ -103,7 +104,7 @@ export function trigger (target, key, type) {
     })
   }
 
-  if (type === TriggerType.ADD) {
+  if (type === TriggerType.ADD || type === TriggerType.DELETE) {
     // 获取与 ITERATE_KEY 相关联的副作用函数
     const iterateEffects = depsMap.get(ITERATE_KEY)
     if (iterateEffects) {
