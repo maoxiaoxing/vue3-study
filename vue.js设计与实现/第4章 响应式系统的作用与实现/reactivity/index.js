@@ -21,7 +21,7 @@ export function reactive (target) {
         result = Reflect.set(target, key, value, receiver)
         trigger(target, key)
       }
-      return true
+      return result
     },
     deleteProperty (target, key) {
       const hadKey = hasOwn(target, key)
