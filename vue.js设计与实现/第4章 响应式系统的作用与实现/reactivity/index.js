@@ -25,7 +25,8 @@ export function reactive (target) {
       const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
       const oldValue = Reflect.get(target, key, receiver)
       let result = true
-      if (oldValue !== value) {
+      // 新值和旧值不相等，并且都不是 NaN
+      if (oldValue !== value && (oldValue !== oldValue || value !== value)) {
         result = Reflect.set(target, key, value, receiver)
         trigger(target, key, type)
       }
