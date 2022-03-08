@@ -3,6 +3,8 @@ const convert = target => isObject(target) ? reactive : target
 const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
 
+const ITERATE_KEY = Symbol()
+
 export function reactive (target) {
   if (!isObject(target)) {
     return target
@@ -31,6 +33,10 @@ export function reactive (target) {
         trigger(target, key)
       }
       return result
+    },
+    ownKeys(target) {
+      track(target, ITERATE_KEY)
+      return Reflect.ownKeys(target)
     }
   }
 
@@ -81,11 +87,21 @@ export function trigger (target, key) {
   const depsMap = targetMap.get(target)
   if (!depsMap) return
   const effects = depsMap.get(key)
+  // 获取与 ITERATE_KEY 相关联的副作用函数
+  const iterateEffects = depsMap.get(ITERATE_KEY)
   const effectsToRun = new Set()
   if (effects) {
     effects.forEach((effectFn) => {
       // 如果 trigger 触发执行的副作用函数与当前正在执行的副作用函数相同，则不触发执行
       // 避免无限递归执行
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
+  }
+
+  if (iterateEffects) {
+    iterateEffects.forEach((effectFn) => {
       if (effectFn !== activeEffect) {
         effectsToRun.add(effectFn)
       }

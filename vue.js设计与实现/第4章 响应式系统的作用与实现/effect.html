@@ -22,7 +22,10 @@
     const p = reactive(obj)
 
     effect(() => {
-      console.log(p.bar)
+      // console.log(p.bar)
+      for (const key in p) {
+        console.log(key)
+      }
     })
     p.foo++
 
