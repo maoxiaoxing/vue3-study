@@ -1,5 +1,5 @@
 const isObject = val => val !== null && typeof val === 'object'
-const convert = target => isObject(target) ? reactive : target
+const convert = target => isObject(target) ? reactive(target) : target
 const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
 

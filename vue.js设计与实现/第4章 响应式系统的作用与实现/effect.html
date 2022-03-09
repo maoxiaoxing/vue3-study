@@ -34,17 +34,23 @@
 
     // delete p.bar
 
-    const obj = {}
+    const obj = {
+      a: {b: 1}
+    }
     const proto = {bar: 1}
     const child = reactive(obj)
     const parent = reactive(proto)
     Object.setPrototypeOf(child, parent)
 
     effect(() => {
-      console.log(child.bar)
+      // console.log(child.bar)
+      console.log(child.a.b)
     })
-    child.bar++
-    child.bar++
+    // child.bar++
+    // child.bar++
+    child.a.b++
+    child.a.b++
+
 
   </script>
 </body>
