@@ -10,7 +10,7 @@ const TriggerType = {
   DELETE: 'DELETE',
 }
 
-export function reactive (target) {
+function createReactive(target, isShallow = false) {
   if (!isObject(target)) {
     return target
   }
@@ -23,6 +23,9 @@ export function reactive (target) {
       }
       const result = Reflect.get(target, key, receiver)
       track(target, key)
+      if (isShallow) {
+        return result
+      }
       return convert(result)
     },
     set (target, key, value, receiver) {
@@ -56,6 +59,15 @@ export function reactive (target) {
   }
 
   return new Proxy(target, handler)
+}
+
+export function reactive (target) {
+  return createReactive(target)
+}
+
+// 浅响应
+export function shallowReactive(target) {
+  return createReactive(target, true)
 }
 
 let activeEffect = null
