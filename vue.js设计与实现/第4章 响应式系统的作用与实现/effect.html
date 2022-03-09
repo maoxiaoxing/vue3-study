@@ -12,23 +12,39 @@
   <script type="module">
     import { reactive, effect } from './reactivity/index.js'
 
-    const obj = {
-      foo: 1,
-      get bar () {
-        return this.foo
-      }
-    }
+    // const obj = {
+    //   foo: 1,
+    //   get bar () {
+    //     return this.foo
+    //   }
+    // }
 
-    const p = reactive(obj)
+    // const p = reactive(obj)
+
+    // effect(() => {
+    //   console.log(p.bar)
+    //   for (const key in p) {
+    //     console.log(key)
+    //   }
+    // })
+    // p.foo++
+    // p.foo++
+    // p.foo++
+
+
+    // delete p.bar
+
+    const obj = {}
+    const proto = {bar: 1}
+    const child = reactive(obj)
+    const parent = reactive(proto)
+    Object.setPrototypeOf(child, parent)
 
     effect(() => {
-      // console.log(p.bar)
-      for (const key in p) {
-        console.log(key)
-      }
+      console.log(child.bar)
     })
-    // p.foo++
-    delete p.bar
+    child.bar++
+    child.bar++
 
   </script>
 </body>

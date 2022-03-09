@@ -17,6 +17,10 @@ export function reactive (target) {
 
   const handler = {
     get (target, key, receiver) {
+      // 代理对象通过raw访问原始对象
+      if (key === 'raw') {
+        return target
+      }
       const result = Reflect.get(target, key, receiver)
       track(target, key)
       return convert(result)
@@ -25,11 +29,15 @@ export function reactive (target) {
       const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
       const oldValue = Reflect.get(target, key, receiver)
       let result = true
-      // 新值和旧值不相等，并且都不是 NaN
-      if (oldValue !== value && (oldValue !== oldValue || value !== value)) {
-        result = Reflect.set(target, key, value, receiver)
-        trigger(target, key, type)
+      result = Reflect.set(target, key, value, receiver)
+
+      if (target === receiver.raw) {
+        // 新值和旧值不相等，并且都不是 NaN
+        if (oldValue !== value && (oldValue === oldValue || value === value)) {
+          trigger(target, key, type)
+        }
       }
+      
       return result
     },
     deleteProperty (target, key) {
