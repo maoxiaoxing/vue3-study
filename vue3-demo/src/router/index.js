@@ -8,6 +8,7 @@ import Watch from '../pages/compositionAPIDemo/watch.vue'
 import WatchEffect from '../pages/compositionAPIDemo/watchEffect.vue'
 import todoList from '@/pages/todoList/todoList'
 import LifeCycle from '@/pages/compositionAPIDemo/lifeCycle'
+import Effect from '@/pages/compositionAPIDemo/effect'
 
 export const routes = [
   {
@@ -62,6 +63,12 @@ export const routes = [
         name: 'WatchEffect',
         title: 'WatchEffect',
         component: WatchEffect,
+      },
+      {
+        path: '/demo/Effect',
+        name: 'Effect',
+        title: 'Effect',
+        component: Effect,
       },
     ]
   },
