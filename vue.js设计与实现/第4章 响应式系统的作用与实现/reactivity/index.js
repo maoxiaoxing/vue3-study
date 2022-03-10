@@ -10,7 +10,7 @@ const TriggerType = {
   DELETE: 'DELETE',
 }
 
-function createReactive(target, isShallow = false) {
+function createReactive(target, isShallow = false, isReadonly = false) {
   if (!isObject(target)) {
     return target
   }
@@ -21,17 +21,23 @@ function createReactive(target, isShallow = false) {
       if (key === 'raw') {
         return target
       }
+      if (!isReadonly) {
+        track(target, key)
+      }
       const result = Reflect.get(target, key, receiver)
-      track(target, key)
       if (isShallow) {
         return result
       }
       return convert(result)
     },
     set (target, key, value, receiver) {
+      let result = true
+      if (isReadonly) {
+        console.warn(`属性${key}是只读的`)
+        return result
+      }
       const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
       const oldValue = Reflect.get(target, key, receiver)
-      let result = true
       result = Reflect.set(target, key, value, receiver)
 
       if (target === receiver.raw) {
@@ -44,8 +50,13 @@ function createReactive(target, isShallow = false) {
       return result
     },
     deleteProperty (target, key) {
+      let result = true
+      if (isReadonly) {
+        console.warn(`属性${key}是只读的`)
+        return result
+      }
       const hadKey = hasOwn(target, key)
-      const result = Reflect.deleteProperty(target, key)
+      result = Reflect.deleteProperty(target, key)
       if (hadKey && result) {
         // console.log('del', key)
         trigger(target, key, TriggerType.DELETE)
@@ -68,6 +79,10 @@ export function reactive (target) {
 // 浅响应
 export function shallowReactive(target) {
   return createReactive(target, true)
+}
+
+export function readonly(target) {
+  return createReactive(target, false, true)
 }
 
 let activeEffect = null
