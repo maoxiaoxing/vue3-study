@@ -1,5 +1,7 @@
 const isObject = val => val !== null && typeof val === 'object'
-const convert = target => isObject(target) ? reactive(target) : target
+const convert = (target, isReadonly) => {
+  return isObject(target) ? isReadonly ? readonly(target) : reactive(target) : target
+}
 const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
 
@@ -28,7 +30,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       if (isShallow) {
         return result
       }
-      return convert(result)
+      return convert(result, isReadonly)
     },
     set (target, key, value, receiver) {
       let result = true
@@ -83,6 +85,10 @@ export function shallowReactive(target) {
 
 export function readonly(target) {
   return createReactive(target, false, true)
+}
+
+export function shallowReadonly(target) {
+  return createReactive(target, true, true)
 }
 
 let activeEffect = null
