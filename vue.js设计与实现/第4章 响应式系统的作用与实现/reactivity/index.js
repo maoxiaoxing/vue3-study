@@ -49,7 +49,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       if (target === receiver.raw) {
         // 新值和旧值不相等，并且都不是 NaN
         if (oldValue !== value && (oldValue === oldValue || value === value)) {
-          trigger(target, key, type)
+          trigger(target, key, type, value)
         }
       }
       
@@ -135,7 +135,7 @@ export function track (target, key) {
   activeEffect.deps.push(deps)
 }
 
-export function trigger (target, key, type) {
+export function trigger (target, key, type, newValue) {
   const depsMap = targetMap.get(target)
 
   if (!depsMap) return
@@ -168,6 +168,19 @@ export function trigger (target, key, type) {
     lengthEffects && lengthEffects.forEach((effectFn) => {
       if (effectFn !== activeEffect) {
         effectsToRun.add(effectFn)
+      }
+    })
+  }
+
+  if (Array.isArray(target) && key === 'length') {
+    console.log(depsMap)
+    depsMap.forEach((effects, key) => {
+      if (key >= newValue) {
+        effects.forEach((effectFn) => {
+          if (effectFn !== activeEffect) {
+            effectsToRun.add(effectFn)
+          }
+        })
       }
     })
   }
