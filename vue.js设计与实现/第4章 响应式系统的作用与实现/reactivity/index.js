@@ -27,6 +27,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
         track(target, key)
       }
       const result = Reflect.get(target, key, receiver)
+
       if (isShallow) {
         return result
       }
@@ -38,7 +39,10 @@ function createReactive(target, isShallow = false, isReadonly = false) {
         console.warn(`属性${key}是只读的`)
         return result
       }
-      const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
+      // const type = hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
+      const type = Array.isArray(target) 
+        ? Number(key) < target.length ? TriggerType.SET : TriggerType.ADD 
+        : hasOwn(target, key) ? TriggerType.SET : TriggerType.ADD
       const oldValue = Reflect.get(target, key, receiver)
       result = Reflect.set(target, key, value, receiver)
 
@@ -133,6 +137,7 @@ export function track (target, key) {
 
 export function trigger (target, key, type) {
   const depsMap = targetMap.get(target)
+
   if (!depsMap) return
   const effects = depsMap.get(key)
   const effectsToRun = new Set()
@@ -156,6 +161,15 @@ export function trigger (target, key, type) {
         }
       })
     }
+  }
+
+  if (type === TriggerType.ADD && Array.isArray(target)) {
+    const lengthEffects = depsMap.get('length')
+    lengthEffects && lengthEffects.forEach((effectFn) => {
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
   }
   
   effectsToRun.forEach((effectFn) => {
