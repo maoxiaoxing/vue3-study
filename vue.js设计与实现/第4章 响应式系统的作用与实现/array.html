@@ -12,7 +12,8 @@
   <script type="module">
     import { reactive, effect } from './reactivity/index.js'
 
-    const arr = reactive(['foo'])
+    // const arr = reactive(['foo'])
+    const arr = reactive([1, 2])
 
     effect(() => {
       // console.log(arr.length)
@@ -21,9 +22,10 @@
       //   console.log(key)
       // }
 
-      for(const value of arr) {
-        console.log(value)
-      }
+      // for(const value of arr) {
+      //   console.log(value)
+      // }
+      console.log(arr.includes(1))
     })
 
     arr[1] = 'bar'
