@@ -16,11 +16,19 @@
 
     effect(() => {
       // console.log(arr.length)
-      console.log(arr[0])
+      // console.log(arr[0])
+      // for(const key in arr) {
+      //   console.log(key)
+      // }
+
+      for(const value of arr) {
+        console.log(value)
+      }
     })
 
-    // arr[1] = 'bar'
-    arr.length = 10
+    arr[1] = 'bar'
+    // arr.length = 0
+    // arr.length = 10
 
 
   </script>

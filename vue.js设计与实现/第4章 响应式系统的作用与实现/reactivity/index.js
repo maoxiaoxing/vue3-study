@@ -23,7 +23,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       if (key === 'raw') {
         return target
       }
-      if (!isReadonly) {
+      if (!isReadonly && typeof key !== 'symbol') {
         track(target, key)
       }
       const result = Reflect.get(target, key, receiver)
@@ -70,7 +70,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       return result
     },
     ownKeys(target) {
-      track(target, ITERATE_KEY)
+      track(target, Array.isArray(target) ? 'length' : ITERATE_KEY)
       return Reflect.ownKeys(target)
     }
   }
@@ -173,7 +173,6 @@ export function trigger (target, key, type, newValue) {
   }
 
   if (Array.isArray(target) && key === 'length') {
-    console.log(depsMap)
     depsMap.forEach((effects, key) => {
       if (key >= newValue) {
         effects.forEach((effectFn) => {
