@@ -15,12 +15,15 @@ export default {
     const child = reactive(obj)
     const parent = reactive(proto)
     Object.setPrototypeOf(child, parent)
+    const arr = reactive(['foo'])
 
     watchEffect(() => {
       console.log(child.bar)
+      console.log(arr)
     })
     child.bar++
     child.bar++
+    arr[1] = 'bar'
 
     return {
     }
