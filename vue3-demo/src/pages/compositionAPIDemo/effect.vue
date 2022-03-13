@@ -19,7 +19,8 @@ export default {
 
     watchEffect(() => {
       console.log(child.bar)
-      console.log(arr)
+      arr.push(1)
+      console.log(arr, '00')
     })
     child.bar++
     child.bar++
