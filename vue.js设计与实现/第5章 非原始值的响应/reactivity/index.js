@@ -47,8 +47,11 @@ let shouldTrack = true
 const mutableInstrumentations = {
   add(key) {
     const target = this.raw
+    const hadKey = target.has(key)
     const res = target.add(key)
-    trigger(target, key, TriggerType.ADD)
+    if (!hadKey) {
+      trigger(target, key, TriggerType.ADD)
+    }
     return res
   }
 }
