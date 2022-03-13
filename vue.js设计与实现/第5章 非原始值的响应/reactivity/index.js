@@ -44,6 +44,15 @@ let shouldTrack = true
   }
 })
 
+const mutableInstrumentations = {
+  add(key) {
+    const target = this.raw
+    const res = target.add(key)
+    trigger(target, key, TriggerType.ADD)
+    return res
+  }
+}
+
 function createReactive(target, isShallow = false, isReadonly = false) {
   if (!isObject(target)) {
     return target
@@ -61,7 +70,7 @@ function createReactive(target, isShallow = false, isReadonly = false) {
           track(target, ITERATE_KEY)
           return Reflect.get(target, key, target)
         }
-        return target[key].bind(target)
+        return mutableInstrumentations[key]
       }
 
       if (Array.isArray(target) && hasOwn(arrayInstrumentations, key)) {
