@@ -56,10 +56,12 @@ function createReactive(target, isShallow = false, isReadonly = false) {
         return target
       }
 
-      console.log(target, 'tar')
-      if (key === 'size') {
-        track(target, ITERATE_KEY)
-        return Reflect.get(target, key, target)
+      if (ObservableType.includes(getType(target))) {
+        if (key === 'size') {
+          track(target, ITERATE_KEY)
+          return Reflect.get(target, key, target)
+        }
+        return target[key].bind(target)
       }
 
       if (Array.isArray(target) && hasOwn(arrayInstrumentations, key)) {
