@@ -4,6 +4,12 @@ const convert = (target, isReadonly) => {
 }
 const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
+const getType = (proto) => {
+  const type = Object.prototype.toString.call(proto).toLowerCase()
+  return type.slice(8, type.length - 1)
+}
+// console.log(getType(new Set()))
+const ObservableType = 'Map,Set,WeakMap,WeakSet'.toLowerCase()
 
 const ITERATE_KEY = Symbol()
 const TriggerType = {
@@ -48,6 +54,12 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       // 代理对象通过raw访问原始对象
       if (key === 'raw') {
         return target
+      }
+
+      console.log(target, 'tar')
+      if (key === 'size') {
+        track(target, ITERATE_KEY)
+        return Reflect.get(target, key, target)
       }
 
       if (Array.isArray(target) && hasOwn(arrayInstrumentations, key)) {

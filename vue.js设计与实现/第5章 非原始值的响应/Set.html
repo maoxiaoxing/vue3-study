@@ -13,6 +13,7 @@
     import { reactive, effect } from './reactivity/index.js'
 
     const s = reactive(new Set([1,2,3]))
+    const obj = reactive({a:1})
 
     effect(() => {
       console.log(s.size)
