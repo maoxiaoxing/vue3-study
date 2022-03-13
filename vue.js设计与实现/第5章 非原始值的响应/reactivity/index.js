@@ -53,7 +53,16 @@ const mutableInstrumentations = {
       trigger(target, key, TriggerType.ADD)
     }
     return res
-  }
+  },
+  delete(key) {
+    const target = this.raw
+    const hadKey = target.has(key)
+    const res = target.delete(key)
+    if (hadKey) {
+      trigger(target, key, TriggerType.DELETE)
+    }
+    return res
+  },
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {
