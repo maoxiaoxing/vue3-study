@@ -13,17 +13,27 @@ const TriggerType = {
 }
 const reactiveMap = new Map()
 
-const originMethods = ['includes', 'indexOf', 'lastIndexOf']
-const arrayInftrumentations = {}
+const arrayInstrumentations = {}
 
-originMethods.forEach((method) => {
+;['includes', 'indexOf', 'lastIndexOf'].forEach((method) => {
   const originMethod = Array.prototype[method]
-  arrayInftrumentations[method] = function (...args) {
+  arrayInstrumentations[method] = function (...args) {
     let res = originMethod.apply(this, args)
     if (res === false) {
       // res 为 false 说明没有找到，通过 this.raw 拿到原始数组，再去其中查找更新res的值
       res = originMethod.apply(this.raw, args)
     }
+    return res
+  }
+})
+
+let shouldTrack = true
+;['push', 'pop', 'shift', 'unshift', 'splice'].forEach((method) => {
+  const originMethod = Array.prototype[method]
+  arrayInstrumentations[method] = function (...args) {
+    shouldTrack = false
+    let res = originMethod.apply(this, args)
+    shouldTrack = true
     return res
   }
 })
@@ -40,8 +50,8 @@ function createReactive(target, isShallow = false, isReadonly = false) {
         return target
       }
 
-      if (Array.isArray(target) && arrayInftrumentations.hasOwnProperty(key)) {
-        return Reflect.get(arrayInftrumentations, key, receiver)
+      if (Array.isArray(target) && hasOwn(arrayInstrumentations, key)) {
+        return Reflect.get(arrayInstrumentations, key, receiver)
       }
 
       if (!isReadonly && typeof key !== 'symbol') {
@@ -147,7 +157,7 @@ export function effect (callback, options = {}) {
 let targetMap = new WeakMap()
 
 export function track (target, key) {
-  if (!activeEffect) return
+  if (!activeEffect || !shouldTrack) return
   let depsMap = targetMap.get(target)
   if (!depsMap) {
     targetMap.set(target, (depsMap = new Map()))
