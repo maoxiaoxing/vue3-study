@@ -11,6 +11,22 @@ const TriggerType = {
   ADD: 'ADD',
   DELETE: 'DELETE',
 }
+const reactiveMap = new Map()
+
+const originMethods = ['includes', 'indexOf', 'lastIndexOf']
+const arrayInftrumentations = {}
+
+originMethods.forEach((method) => {
+  const originMethod = Array.prototype[method]
+  arrayInftrumentations[method] = function (...args) {
+    let res = originMethod.apply(this, args)
+    if (res === false) {
+      // res 为 false 说明没有找到，通过 this.raw 拿到原始数组，再去其中查找更新res的值
+      res = originMethod.apply(this.raw, args)
+    }
+    return res
+  }
+})
 
 function createReactive(target, isShallow = false, isReadonly = false) {
   if (!isObject(target)) {
@@ -23,6 +39,11 @@ function createReactive(target, isShallow = false, isReadonly = false) {
       if (key === 'raw') {
         return target
       }
+
+      if (Array.isArray(target) && arrayInftrumentations.hasOwnProperty(key)) {
+        return Reflect.get(arrayInftrumentations, key, receiver)
+      }
+
       if (!isReadonly && typeof key !== 'symbol') {
         track(target, key)
       }
@@ -79,7 +100,13 @@ function createReactive(target, isShallow = false, isReadonly = false) {
 }
 
 export function reactive (target) {
-  return createReactive(target)
+  // 优先从代理对象中找到原始代理对象
+  const existionProxy = reactiveMap.get(target)
+  if (existionProxy) return existionProxy
+
+  const proxy = createReactive(target)
+  reactiveMap.set(target, proxy)
+  return proxy
 }
 
 // 浅响应
