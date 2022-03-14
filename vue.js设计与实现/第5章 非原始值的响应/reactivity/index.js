@@ -63,6 +63,26 @@ const mutableInstrumentations = {
     }
     return res
   },
+  get(key) {
+    const target = this.raw
+    const had = target.has(key)
+    track(target, key)
+    if (had) {
+      const res = target.get(key)
+      return convert(target)
+    }
+  },
+  set(key, value) {
+    const target = this.raw
+    const had = target.has(key)
+    const oldValue = target.get(key)
+    target.set(key, value)
+    if (!had) {
+      trigger(target, key, TriggerType.ADD)
+    } else if (oldValue !== value || (oldValue === oldValue && value === value)) {
+      trigger(target, key, TriggerType.SET)
+    }
+  },
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {
