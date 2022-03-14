@@ -76,7 +76,8 @@ const mutableInstrumentations = {
     const target = this.raw
     const had = target.has(key)
     const oldValue = target.get(key)
-    target.set(key, value)
+    const rawValue = value.raw || value
+    target.set(key, rawValue)
     if (!had) {
       trigger(target, key, TriggerType.ADD)
     } else if (oldValue !== value || (oldValue === oldValue && value === value)) {
@@ -264,6 +265,7 @@ export function trigger (target, key, type, newValue) {
     })
   }
 
+  // 处理修改数组的 length
   if (Array.isArray(target) && key === 'length') {
     depsMap.forEach((effects, key) => {
       if (key >= newValue) {

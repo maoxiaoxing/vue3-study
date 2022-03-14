@@ -13,11 +13,19 @@
     import { reactive, effect } from './reactivity/index.js'
 
     const proxy = reactive(new Map([['key', 1]]))
+    const m = new Map()
+    const p1 = reactive(m)
+    const p2 = reactive(m)
+
+    p1.set('p2', p2)
 
     effect(() => {
-      console.log(proxy.get('key'))
+      // console.log(proxy.get('key'))
+      console.log(m.get('p2').size)
+      console.log(m)
     })
-    proxy.set('key', 2)
+    // proxy.set('key', 2)
+    m.get('p2').set('foo', 1)
 
   </script>
 </body>
