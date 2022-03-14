@@ -84,6 +84,12 @@ const mutableInstrumentations = {
       trigger(target, key, TriggerType.SET)
     }
   },
+  forEach(callback) {
+    console.log(123)
+    const target = this.raw
+    track(target, ITERATE_KEY)
+    target.forEach(callback)
+  }
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {
