@@ -25,6 +25,7 @@
     const p2 = reactive(new Map([
       ['key', 1]
     ]))
+    const s = reactive(value)
 
     effect(() => {
       // p.forEach((value, key) => {
@@ -34,15 +35,28 @@
       // p1.forEach((value, key) => {
       //   console.log(value.size)
       // })
-      p2.forEach((val, key) => {
-        console.log(val)
-      })
+      // p2.forEach((val, key) => {
+      //   console.log(val)
+      // })
+
+      // s.forEach((val) => {
+      //   console.log(val)
+      // })
+
+      // for (const [key, value] of p2) {
+      //   console.log(key, value)
+      // }
+      console.log(p2.entries())
+      for (const [key, value] of p2.entries()) {
+        console.log(key, value)
+      }
     })
 
     // p.set({key: 2}, {value: 2})
     // p1.get(key).delete(1)
-    p2.set('key', 2)
+    p2.set('key1', 2)
 
+    // s.add(4)
   </script>
 </body>
 </html>

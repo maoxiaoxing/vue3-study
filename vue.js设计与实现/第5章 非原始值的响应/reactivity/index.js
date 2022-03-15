@@ -44,6 +44,25 @@ let shouldTrack = true
   }
 })
 
+const iterationMethod = function () {
+  const target = this.raw
+  const itr = target[Symbol.iterator]()
+  track(target, ITERATE_KEY)
+  console.log(this,' tar')
+  return {
+    [Symbol.iterator]() {
+      return this
+    },
+    next() {
+      const { value, done } = itr.next()
+      return {
+        value: value ? [convert(value[0]), convert(value[1])] : value,
+        done,
+      }
+    }
+  }
+}
+
 const mutableInstrumentations = {
   add(key) {
     const target = this.raw
@@ -89,9 +108,11 @@ const mutableInstrumentations = {
     const target = this.raw
     track(target, ITERATE_KEY)
     target.forEach((v, k) => {
-      callback.call(thisArg, rap(v), rap(k), this)
+      callback.call(thisArg, convert(v), convert(k), this)
     })
-  }
+  },
+  [Symbol.iterator]: iterationMethod,
+  entries: iterationMethod,
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {
