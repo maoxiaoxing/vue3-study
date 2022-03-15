@@ -252,7 +252,14 @@ export function trigger (target, key, type, newValue) {
     })
   }
 
-  if (type === TriggerType.ADD || type === TriggerType.DELETE) {
+  if (
+    type === TriggerType.ADD ||
+    type === TriggerType.DELETE ||
+    (
+      type === TriggerType.SET &&
+      getType(target) === 'map'
+    )
+  ) {
     // 获取与 ITERATE_KEY 相关联的副作用函数
     const iterateEffects = depsMap.get(ITERATE_KEY)
     if (iterateEffects) {

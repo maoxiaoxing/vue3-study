@@ -22,19 +22,26 @@
     const p1 = reactive(new Map([
       [key, value],
     ]))
+    const p2 = reactive(new Map([
+      ['key', 1]
+    ]))
 
     effect(() => {
       // p.forEach((value, key) => {
       //   console.log(value)
       //   console.log(key)
       // })
-      p1.forEach((value, key) => {
-        console.log(value.size)
+      // p1.forEach((value, key) => {
+      //   console.log(value.size)
+      // })
+      p2.forEach((val, key) => {
+        console.log(val)
       })
     })
 
     // p.set({key: 2}, {value: 2})
-    p1.get(key).delete(1)
+    // p1.get(key).delete(1)
+    p2.set('key', 2)
 
   </script>
 </body>
