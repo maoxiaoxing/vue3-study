@@ -69,7 +69,7 @@ const mutableInstrumentations = {
     track(target, key)
     if (had) {
       const res = target.get(key)
-      return convert(target)
+      return convert(res)
     }
   },
   set(key, value) {
@@ -84,11 +84,13 @@ const mutableInstrumentations = {
       trigger(target, key, TriggerType.SET)
     }
   },
-  forEach(callback) {
-    console.log(123)
+  forEach(callback, thisArg) {
+    const rap = (val) => typeof val === 'object' ? reactive(val) : val
     const target = this.raw
     track(target, ITERATE_KEY)
-    target.forEach(callback)
+    target.forEach((v, k) => {
+      callback.call(thisArg, rap(v), rap(k), this)
+    })
   }
 }
 

@@ -17,14 +17,24 @@
     ])
     const p = reactive(m)
 
+    const key = {key: 1}
+    const value = new Set([1,2,3])
+    const p1 = reactive(new Map([
+      [key, value],
+    ]))
+
     effect(() => {
-      p.forEach((value, key) => {
-        console.log(value)
-        console.log(key)
+      // p.forEach((value, key) => {
+      //   console.log(value)
+      //   console.log(key)
+      // })
+      p1.forEach((value, key) => {
+        console.log(value.size)
       })
     })
 
-    p.set({key: 2}, {value: 2})
+    // p.set({key: 2}, {value: 2})
+    p1.get(key).delete(1)
 
   </script>
 </body>
