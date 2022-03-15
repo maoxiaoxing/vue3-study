@@ -50,6 +50,7 @@ const iterationMethod = function () {
   track(target, ITERATE_KEY)
   console.log(this,' tar')
   return {
+    // mark
     [Symbol.iterator]() {
       return this
     },
