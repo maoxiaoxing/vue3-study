@@ -440,6 +440,13 @@ function cleanup (effectFn) {
 //   return r
 // }
 
+export function ref(val) {
+  const wrapper = {
+    value: val
+  }
+  return reactive(wrapper)
+}
+
 export function computed (getter) {
   // 用来缓存上一次计算值
   let value
