@@ -83,6 +83,27 @@ function valuesIterationMethod() {
   }
 }
 
+const MAP_KEY_ITERATE_KEY = Symbol()
+
+function keysIterationMethod() {
+  const target = this.raw
+  const itr = target.keys()
+  track(target, MAP_KEY_ITERATE_KEY)
+  return {
+    // mark
+    [Symbol.iterator]() {
+      return this
+    },
+    next() {
+      const { value, done } = itr.next()
+      return {
+        value: convert(value),
+        done,
+      }
+    }
+  }
+}
+
 const mutableInstrumentations = {
   add(key) {
     const target = this.raw
@@ -134,6 +155,7 @@ const mutableInstrumentations = {
   [Symbol.iterator]: iterationMethod,
   entries: iterationMethod,
   values: valuesIterationMethod,
+  keys: keysIterationMethod,
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {
@@ -304,6 +326,22 @@ export function trigger (target, key, type, newValue) {
   ) {
     // 获取与 ITERATE_KEY 相关联的副作用函数
     const iterateEffects = depsMap.get(ITERATE_KEY)
+    if (iterateEffects) {
+      iterateEffects.forEach((effectFn) => {
+        if (effectFn !== activeEffect) {
+          effectsToRun.add(effectFn)
+        }
+      })
+    }
+  }
+
+  if (
+    (type === TriggerType.ADD ||
+    type === TriggerType.DELETE) &&
+    getType(target) === 'map'
+  ) {
+    // 获取与 ITERATE_KEY 相关联的副作用函数
+    const iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY)
     if (iterateEffects) {
       iterateEffects.forEach((effectFn) => {
         if (effectFn !== activeEffect) {
