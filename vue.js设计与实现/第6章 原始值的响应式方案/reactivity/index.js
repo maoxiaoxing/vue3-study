@@ -444,6 +444,23 @@ export function isRef(r) {
   return r ? r.__v_isRef === true : false
 }
 
+export function unref(ref) {
+  return isRef(ref) ? ref.value : ref
+}
+
+// const shallowUnwrapHandlers = {
+//   get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
+//   set: (target, key, value, receiver) => {
+//     const oldValue = target[key]
+//     if (isRef(oldValue) && !isRef(value)) {
+//       oldValue.value = value
+//       return true
+//     } else {
+//       return Reflect.set(target, key, value, receiver)
+//     }
+//   }
+// }
+
 export function ref(val) {
   const wrapper = {
     value: val
