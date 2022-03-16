@@ -18,17 +18,14 @@
     })
     console.log(obj)
 
-    // const newObj = {
-    //   ...toRefs(obj)
-    // }
+    const newObj = {
+      ...toRefs(obj)
+    }
 
     effect(() => {
-      for (const v of obj) {
-        console.log(v)
-      }
-      // console.log(newObj.foo)
+      console.log(newObj.foo)
     })
-    // newObj.foo = 2
+    newObj.foo = 2
 
   </script>
 </body>

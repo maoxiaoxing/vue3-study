@@ -448,27 +448,47 @@ export function unref(ref) {
   return isRef(ref) ? ref.value : ref
 }
 
-// const shallowUnwrapHandlers = {
-//   get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
-//   set: (target, key, value, receiver) => {
-//     const oldValue = target[key]
-//     if (isRef(oldValue) && !isRef(value)) {
-//       oldValue.value = value
-//       return true
-//     } else {
-//       return Reflect.set(target, key, value, receiver)
-//     }
-//   }
-// }
+const shallowUnwrapHandlers = {
+  get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
+  set: (target, key, value, receiver) => {
+    const oldValue = target[key]
+    if (isRef(oldValue) && !isRef(value)) {
+      oldValue.value = value
+      return true
+    } else {
+      return Reflect.set(target, key, value, receiver)
+    }
+  }
+}
+
+export function proxyRefs(ref) {
+  return new Proxy(ref, shallowUnwrapHandlers)
+}
+
+function createRef(rawValue, shallow = false) {
+  if (isRef(rawValue)) {
+    return rawValue
+  }
+  let value = shallow ? rawValue : convert(rawValue)
+  const r = {
+    __v_isRef: true,
+    get value() {
+      track(r, 'value')
+      return value
+    },
+    set value(newVal) {
+      if (rawValue !== newVal) {
+        rawValue = newVal
+        value = shallow ? newVal : convert(newVal)
+        trigger(r, 'value', TriggerType.SET, newVal)
+      }
+    }
+  }
+  return r
+}
 
 export function ref(val) {
-  const wrapper = {
-    value: val
-  }
-  Reflect.defineProperty(wrapper, '__v_isRef', {
-    value: true,
-  })
-  return reactive(wrapper)
+  return createRef(val)
 }
 
 export function toRef(obj, key) {
