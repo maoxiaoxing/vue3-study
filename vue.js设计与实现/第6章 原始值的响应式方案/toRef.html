@@ -16,31 +16,19 @@
       foo: 1,
       bar: 2,
     })
-
-    const newObj = {
-      ...obj,
-    }
-
     console.log(obj)
 
     // const newObj = {
-    //   foo: {
-    //     get value() {
-    //       return obj.foo
-    //     }
-    //   },
-    //   bar: {
-    //     get value() {
-    //       return obj.bar
-    //     }
-    //   }
+    //   ...toRefs(obj)
     // }
 
     effect(() => {
-      console.log(newObj.foo)
+      for (const v of obj) {
+        console.log(v)
+      }
+      // console.log(newObj.foo)
     })
-
-    obj.foo = 2
+    // newObj.foo = 2
 
   </script>
 </body>

@@ -440,6 +440,10 @@ function cleanup (effectFn) {
 //   return r
 // }
 
+export function isRef(r) {
+  return r ? r.__v_isRef === true : false
+}
+
 export function ref(val) {
   const wrapper = {
     value: val
