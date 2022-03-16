@@ -64,6 +64,25 @@ const iterationMethod = function () {
   }
 }
 
+function valuesIterationMethod() {
+  const target = this.raw
+  const itr = target.values()
+  track(target, ITERATE_KEY)
+  return {
+    // mark
+    [Symbol.iterator]() {
+      return this
+    },
+    next() {
+      const { value, done } = itr.next()
+      return {
+        value: convert(value),
+        done,
+      }
+    }
+  }
+}
+
 const mutableInstrumentations = {
   add(key) {
     const target = this.raw
@@ -114,6 +133,7 @@ const mutableInstrumentations = {
   },
   [Symbol.iterator]: iterationMethod,
   entries: iterationMethod,
+  values: valuesIterationMethod,
 }
 
 function createReactive(target, isShallow = false, isReadonly = false) {

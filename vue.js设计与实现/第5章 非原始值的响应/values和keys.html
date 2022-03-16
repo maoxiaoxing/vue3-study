@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script type="module">
+    import { reactive, effect } from './reactivity/index.js'
+
+    const p = reactive(new Map([
+      ['key1', 'value1'],
+      ['key2', 'value2'],
+    ]))
+
+    effect(() => {
+      for (const value of p.values()) {
+        console.log(value)
+      }
+    })
+
+    p.set('key3', 'value3')
+
+  </script>
+</body>
+</html>
