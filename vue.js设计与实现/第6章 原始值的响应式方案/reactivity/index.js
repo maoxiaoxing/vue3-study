@@ -444,6 +444,9 @@ export function ref(val) {
   const wrapper = {
     value: val
   }
+  Reflect.defineProperty(wrapper, '__v_isRef', {
+    value: true,
+  })
   return reactive(wrapper)
 }
 
