@@ -450,6 +450,28 @@ export function ref(val) {
   return reactive(wrapper)
 }
 
+export function toRef(obj, key) {
+  const wrapper = {
+    __v_isRef: true,
+    get value() {
+      return obj[key]
+    },
+    set (newVal) {
+      obj[key] = newVal
+    }
+  }
+
+  return wrapper
+}
+
+export function toRefs(obj) {
+  const ret = {}
+  for (const key of obj) {
+    ret[key] = toRef(obj, key)
+  }
+  return ret
+}
+
 export function computed (getter) {
   // 用来缓存上一次计算值
   let value
