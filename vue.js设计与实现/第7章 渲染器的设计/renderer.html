@@ -32,8 +32,17 @@
 
     const count = ref(0)
 
+    const vnode = {
+      type: 'h1',
+      children: 'hello'
+    }
+
+    const container = {
+      type: 'root'
+    }
+
     effect(() => {
-      renderer(`<h1>${count.value}</h1>`, document.querySelector('#app'))
+      renderer.render(vnode, container)
     })
 
     btn.addEventListener('click', () => {
