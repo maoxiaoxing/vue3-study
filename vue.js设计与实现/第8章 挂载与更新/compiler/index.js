@@ -41,9 +41,19 @@ function createRenderer(options) {
     }
 
     if (vnode.props) {
-      console.log(el, '1')
       for (const key in vnode.props) {
-        el[key] = vnode.props[key]
+        if (key in el) {
+          const type = typeof el[key]
+          const value = vnode.props[key]
+          // 如果是 boolean 类型 并且 value 是空字符串，将矫正为true
+          if (type === 'boolean' && value === '') {
+            el[key] = true
+          } else {
+            el[key] = value
+          }
+        } else {
+          el.setAttribute(key, vnode.props[key])
+        }
       }
     }
     console.log(container, el, 'ff')
@@ -58,15 +68,17 @@ function createRenderer(options) {
 
 export const renderer = createRenderer({
   createElement(tag) {
-    return {
-      tag,
-    }
+    return document.createElement(tag)
+    // return {
+    //   tag,
+    // }
   },
   setElementText(el, text) {
-    el.text = text
+    el.textContent = text
   },
   insert(el, parent, anchor = null) {
-    parent.children = el
-    console.log(el, parent, 'pa')
+    console.log(el, parent, anchor, 'pa')
+    // parent.children = el
+    parent.insertBefore(el, anchor)
   }
 })
