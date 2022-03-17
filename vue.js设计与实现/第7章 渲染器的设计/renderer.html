@@ -5,20 +5,41 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+    #btn {
+      width: 60px;
+      height: 30px;
+      /* border: 1px solid; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+    }
+  </style>
 </head>
 <body>
   <div id="app"></div>
+  <div id="btn">++</div>
   
   <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
   <!-- <script src="./compiler/index.js"></script> -->
-  <script>
+
+  <script type="module">
+    import { renderer } from './compiler/index.js'
 
     const { effect, ref } = VueReactivity
+
+    const count = ref(0)
+
     effect(() => {
-      console.log(1)
+      renderer(`<h1>${count.value}</h1>`, document.querySelector('#app'))
     })
 
-    renderer(`<h1>hello Vue</h1>`, document.querySelector('#app'))
+    btn.addEventListener('click', () => {
+      count.value++
+    })
+
   </script>
 </body>
 </html>
