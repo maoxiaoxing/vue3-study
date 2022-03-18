@@ -5,6 +5,7 @@ function createRenderer(options) {
     createElement,
     insert,
     setElementText,
+    patchProps,
   } = options
 
   function render(vnode, container) {
@@ -43,17 +44,7 @@ function createRenderer(options) {
     if (vnode.props) {
       for (const key in vnode.props) {
         const value = vnode.props[key]
-        if (shouldSetAsProps(el, key, value)) {
-          const type = typeof el[key]
-          // 如果是 boolean 类型 并且 value 是空字符串，将矫正为true
-          if (type === 'boolean' && value === '') {
-            el[key] = true
-          } else {
-            el[key] = value
-          }
-        } else {
-          el.setAttribute(key, value)
-        }
+        patchProps(el, key, null, value)
       }
     }
     insert(el, container)
@@ -87,5 +78,18 @@ export const renderer = createRenderer({
     console.log(el, parent, anchor, 'pa')
     // parent.children = el
     parent.insertBefore(el, anchor)
+  },
+  patchProps(el, key, prevValue, nextValue) {
+    if (shouldSetAsProps(el, key, nextValue)) {
+      const type = typeof el[key]
+      // 如果是 boolean 类型 并且 value 是空字符串，将矫正为true
+      if (type === 'boolean' && nextValue === '') {
+        el[key] = true
+      } else {
+        el[key] = nextValue
+      }
+    } else {
+      el.setAttribute(key, nextValue)
+    }
   }
 })
