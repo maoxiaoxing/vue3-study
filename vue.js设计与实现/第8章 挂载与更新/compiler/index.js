@@ -1,3 +1,4 @@
+import { getType } from '../reactivity/index.js'
 
 function createRenderer(options) {
 
@@ -80,7 +81,9 @@ export const renderer = createRenderer({
     parent.insertBefore(el, anchor)
   },
   patchProps(el, key, prevValue, nextValue) {
-    if (shouldSetAsProps(el, key, nextValue)) {
+    if (key === 'class') {
+      el.className = nextValue || ''
+    } else if (shouldSetAsProps(el, key, nextValue)) {
       const type = typeof el[key]
       // 如果是 boolean 类型 并且 value 是空字符串，将矫正为true
       if (type === 'boolean' && nextValue === '') {
@@ -93,3 +96,20 @@ export const renderer = createRenderer({
     }
   }
 })
+
+let resultClass = ''
+
+export function normalizeClass(classObj) {
+  if (typeof classObj === 'string') {
+    resultClass = classObj
+    return resultClass
+  } else if (getType(classObj) === 'object') {
+    for (const key in classObj) {
+      resultClass += key
+    }
+  } else if (Array.isArray(classObj)) {
+    classObj.forEach((c) => {
+      normalizeClass(c)
+    })
+  }
+}

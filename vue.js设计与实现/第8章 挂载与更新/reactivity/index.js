@@ -4,7 +4,7 @@ const convert = (target, isReadonly) => {
 }
 const hasOwnProperty = Object.prototype.hasOwnProperty
 const hasOwn = (target, key) => hasOwnProperty.call(target, key)
-const getType = (proto) => {
+export const getType = (proto) => {
   const type = Object.prototype.toString.call(proto).toLowerCase()
   return type.slice(8, type.length - 1)
 }
