@@ -42,9 +42,9 @@ function createRenderer(options) {
 
     if (vnode.props) {
       for (const key in vnode.props) {
-        if (key in el) {
+        const value = vnode.props[key]
+        if (shouldSetAsProps(el, key, value)) {
           const type = typeof el[key]
-          const value = vnode.props[key]
           // 如果是 boolean 类型 并且 value 是空字符串，将矫正为true
           if (type === 'boolean' && value === '') {
             el[key] = true
@@ -52,11 +52,10 @@ function createRenderer(options) {
             el[key] = value
           }
         } else {
-          el.setAttribute(key, vnode.props[key])
+          el.setAttribute(key, value)
         }
       }
     }
-    console.log(container, el, 'ff')
     insert(el, container)
   }
 
@@ -64,6 +63,14 @@ function createRenderer(options) {
     render,
     hydrate,
   }
+}
+
+function shouldSetAsProps(el, key, value) {
+  // 处理 input 的只读属性，值设置 HTML Attrbutes，而不设置 DOM Properties
+  if (key === 'form' && el.tagName === 'INPUT') {
+    return false
+  }
+  return key in el
 }
 
 export const renderer = createRenderer({
