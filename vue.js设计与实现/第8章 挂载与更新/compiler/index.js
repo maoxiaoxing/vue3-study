@@ -1,4 +1,4 @@
-import { getType } from '../reactivity/index.js'
+import { getType, isObject } from '../reactivity/index.js'
 
 function createRenderer(options) {
 
@@ -97,24 +97,23 @@ export const renderer = createRenderer({
   }
 })
 
-export function normalizeClass(_classObj) {
-  let classNames = []
-  const dfs = (classObj) => {
-    if (typeof classObj === 'string' && classObj) {
-      classNames.push(classObj)
-    } else if (getType(classObj) === 'object') {
-      for (const key in classObj) {
-        if (classObj[key]) {
-          classNames.push(key)
+export function normalizeClass(_value) {
+  const dfs = (value) => {
+    let res = ''
+    if (getType(value) === 'string') {
+      res = value
+    } else if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        res += normalizeClass(value[i]) + ' '
+      }
+    } else if (isObject(value)) {
+      for (const name in value) {
+        if (value[name]) {
+          res += name + ' '
         }
       }
-    } else if (Array.isArray(classObj)) {
-      classObj.forEach((c) => {
-        dfs(c)
-      })
     }
+    return res.trim()
   }
-
-  dfs(_classObj)
-  return classNames.join(' ')
+  return dfs(_value)
 }

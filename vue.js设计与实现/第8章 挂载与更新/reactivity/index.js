@@ -1,9 +1,9 @@
-const isObject = val => val !== null && typeof val === 'object'
-const convert = (target, isReadonly) => {
+export const isObject = val => val !== null && typeof val === 'object'
+export const convert = (target, isReadonly) => {
   return isObject(target) ? isReadonly ? readonly(target) : reactive(target) : target
 }
-const hasOwnProperty = Object.prototype.hasOwnProperty
-const hasOwn = (target, key) => hasOwnProperty.call(target, key)
+export const hasOwnProperty = Object.prototype.hasOwnProperty
+export const hasOwn = (target, key) => hasOwnProperty.call(target, key)
 export const getType = (proto) => {
   const type = Object.prototype.toString.call(proto).toLowerCase()
   return type.slice(8, type.length - 1)
