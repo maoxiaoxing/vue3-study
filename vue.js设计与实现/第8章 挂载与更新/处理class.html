@@ -27,7 +27,7 @@
   <!-- <script src="./compiler/index.js"></script> -->
 
   <script type="module">
-    import { renderer } from './compiler/index.js'
+    import { renderer, normalizeClass } from './compiler/index.js'
 
     const { effect, ref } = VueReactivity
 
@@ -42,14 +42,14 @@
         {
           type: 'div',
           props: {
-            class: { foo: true, bar: false }
+            class: normalizeClass({ foo: true, bar: false })
           },
           children: 'ooo'
         },
         {
           type: 'div',
           props: {
-            class: ['foo', { baz: true }]
+            class: normalizeClass(['foo', { baz: true }, { bar: false }])
           },
           children: 'kkk'
         },

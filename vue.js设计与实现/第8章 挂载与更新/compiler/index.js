@@ -97,19 +97,24 @@ export const renderer = createRenderer({
   }
 })
 
-let resultClass = ''
-
-export function normalizeClass(classObj) {
-  if (typeof classObj === 'string') {
-    resultClass = classObj
-    return resultClass
-  } else if (getType(classObj) === 'object') {
-    for (const key in classObj) {
-      resultClass += key
+export function normalizeClass(_classObj) {
+  let classNames = []
+  const dfs = (classObj) => {
+    if (typeof classObj === 'string' && classObj) {
+      classNames.push(classObj)
+    } else if (getType(classObj) === 'object') {
+      for (const key in classObj) {
+        if (classObj[key]) {
+          classNames.push(key)
+        }
+      }
+    } else if (Array.isArray(classObj)) {
+      classObj.forEach((c) => {
+        dfs(c)
+      })
     }
-  } else if (Array.isArray(classObj)) {
-    classObj.forEach((c) => {
-      normalizeClass(c)
-    })
   }
+
+  dfs(_classObj)
+  return classNames.join(' ')
 }
