@@ -38,7 +38,7 @@ function createRenderer(options) {
         patchElement(n1, n2)
       }
     } else if (typeof n2.type === 'object') {
-      
+      // type 是对象，描述的是组件
     }
 
   }
@@ -76,7 +76,7 @@ function unmount(vnode) {
 }
 
 function patchElement() {
-  
+
 }
 
 function shouldSetAsProps(el, key, value) {
