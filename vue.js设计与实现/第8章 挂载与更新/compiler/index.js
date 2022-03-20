@@ -26,11 +26,21 @@ function createRenderer(options) {
   }
 
   function patch(n1, n2, container) {
-    if (!n1) {
-      mountElement(n2, container)
-    } else {
-  
+    if (n1 && n1.type !== n2.type) {
+      unmount(n1)
+      n1 = null
     }
+
+    if (getType(n2.type) === 'string') {
+      if (!n1) {
+        mountElement(n2, container)
+      } else {
+        patchElement(n1, n2)
+      }
+    } else if (typeof n2.type === 'object') {
+      
+    }
+
   }
 
   function mountElement(vnode, container) {
@@ -63,6 +73,10 @@ function unmount(vnode) {
   if (parent) {
     parent.removeChild(vnode.el)
   }
+}
+
+function patchElement() {
+  
 }
 
 function shouldSetAsProps(el, key, value) {
