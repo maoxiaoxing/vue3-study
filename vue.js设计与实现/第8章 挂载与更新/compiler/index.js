@@ -14,7 +14,8 @@ function createRenderer(options) {
       patch(container._vnode, vnode, container)
     } else {
       if (container._vnode) {
-        container.innerHTML = ''
+        // container.innerHTML = ''
+        unmount(container._vnode)
       }
     }
     container._vnode = vnode
@@ -33,7 +34,7 @@ function createRenderer(options) {
   }
 
   function mountElement(vnode, container) {
-    const el = createElement(vnode.type)
+    const el = vnode.el = createElement(vnode.type)
     if (typeof vnode.children === 'string') {
       setElementText(el, vnode.children)
     } else if (Array.isArray(vnode.children)) {
@@ -54,6 +55,13 @@ function createRenderer(options) {
   return {
     render,
     hydrate,
+  }
+}
+
+function unmount(vnode) {
+  const parent = vnode.el.parentNode
+  if (parent) {
+    parent.removeChild(vnode.el)
   }
 }
 
@@ -97,6 +105,7 @@ export const renderer = createRenderer({
   }
 })
 
+// 格式化css
 export function normalizeClass(_value) {
   const dfs = (value) => {
     let res = ''
