@@ -104,9 +104,24 @@ export const renderer = createRenderer({
   },
   patchProps(el, key, prevValue, nextValue) {
     if (/^on/.test(key)) {
+      const invokers = el._vei || (el._vei = {})
+      let invoker = invokers[key]
       const name = key.slice(2).toLowerCase()
-      prevValue && el.removeEventListener(name, prevValue)
-      el.addEventListener(name, nextValue)
+      if (nextValue) {
+        // 没有 invoker ,将 invoker 缓存到 el._vei中
+        if (!invoker) {
+          invoker = el._vei[key] = (e) => {
+            invoker.value(e)
+          }
+          invoker.value = nextValue
+          el.addEventListener(name, invoker)
+        } else {
+          invoker.value = nextValue
+        }
+      } else if (invoker) {
+        // 如果 invoker 存在，意味着更新，并且只需要更新 invoker.value的值
+        el.removeEventListener(name, invoker)
+      }
     } else if (key === 'class') {
       el.className = nextValue || ''
     } else if (shouldSetAsProps(el, key, nextValue)) {

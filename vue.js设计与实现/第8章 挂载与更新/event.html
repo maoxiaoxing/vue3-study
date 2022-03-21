@@ -37,6 +37,9 @@
       type: 'div',
       props: {
         class: 'foo bar',
+        onClick: () => {
+          console.log('div')
+        }
       },
       children: 'foo'
     }
@@ -46,8 +49,11 @@
       props: {
         class: 'foo bar',
         onClick: () => {
-          console.log('click')
-        }
+          console.log('p')
+        },
+        onContextmenu: () => {
+          console.log('onContextmenu')
+        },
       },
       children: 'bar'
     }
@@ -55,7 +61,7 @@
     const container = document.querySelector('#app')
 
     effect(() => {
-      renderer.render(vnode, container)
+      // renderer.render(vnode, container)
       setTimeout(() => {
         renderer.render(vnode1, container)
       }, 1000)
