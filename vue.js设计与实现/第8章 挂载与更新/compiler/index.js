@@ -111,7 +111,11 @@ export const renderer = createRenderer({
         // 没有 invoker ,将 invoker 缓存到 el._vei中
         if (!invoker) {
           invoker = el._vei[key] = (e) => {
-            invoker.value(e)
+            if (Array.isArray(invoker.value)) {
+              invoker.value.forEach((fn) => fn(e))
+            } else {
+              invoker.value(e)
+            }
           }
           invoker.value = nextValue
           el.addEventListener(name, invoker)

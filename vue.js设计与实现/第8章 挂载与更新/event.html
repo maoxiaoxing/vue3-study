@@ -48,9 +48,14 @@
       type: 'p',
       props: {
         class: 'foo bar',
-        onClick: () => {
-          console.log('p')
-        },
+        onClick: [
+          () => {
+            console.log('p')
+          },
+          () => {
+            console.log('p1')
+          }
+        ],
         onContextmenu: () => {
           console.log('onContextmenu')
         },
