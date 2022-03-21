@@ -103,7 +103,11 @@ export const renderer = createRenderer({
     parent.insertBefore(el, anchor)
   },
   patchProps(el, key, prevValue, nextValue) {
-    if (key === 'class') {
+    if (/^on/.test(key)) {
+      const name = key.slice(2).toLowerCase()
+      prevValue && el.removeEventListener(name, prevValue)
+      el.addEventListener(name, nextValue)
+    } else if (key === 'class') {
       el.className = nextValue || ''
     } else if (shouldSetAsProps(el, key, nextValue)) {
       const type = typeof el[key]
