@@ -111,6 +111,7 @@ export const renderer = createRenderer({
         // 没有 invoker ,将 invoker 缓存到 el._vei中
         if (!invoker) {
           invoker = el._vei[key] = (e) => {
+            // 如果 invoker.value 是数组，遍历执行每一个事件
             if (Array.isArray(invoker.value)) {
               invoker.value.forEach((fn) => fn(e))
             } else {
