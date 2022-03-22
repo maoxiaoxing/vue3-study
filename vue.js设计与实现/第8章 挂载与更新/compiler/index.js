@@ -10,6 +10,8 @@ function createRenderer(options) {
     insert,
     setElementText,
     patchProps,
+    createText,
+    setText,
   } = options
 
   function render(vnode, container) {
@@ -40,15 +42,15 @@ function createRenderer(options) {
       } else {
         patchElement(n1, n2)
       }
-    } else if (type === Text) {
+    } else if (n2.type === Text) {
       if (!n1) {
         // 没有旧节点，直接创建文本节点，然后进行挂载
-        const el = n2.el = document.createTextNode(n2.children)
+        const el = n2.el = createText(n2.children)
         insert(el, container)
       } else {
         const el = n2.el = n1.el
         if (n2.children !== n1.children) {
-          el.nodeValue = n2.children
+          setText(el, n2.children)
         }
       }
     } else if (typeof n2.type === 'object') {
@@ -152,6 +154,12 @@ export const renderer = createRenderer({
   insert(el, parent, anchor = null) {
     // parent.children = el
     parent.insertBefore(el, anchor)
+  },
+  createText(text) {
+    return document.createTextNode(text)
+  },
+  setText(el, text) {
+    el.nodeValue = text
   },
   patchProps(el, key, prevValue, nextValue) {
     if (/^on/.test(key)) {
