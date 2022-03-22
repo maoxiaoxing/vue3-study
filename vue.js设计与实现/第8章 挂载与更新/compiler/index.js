@@ -1,5 +1,8 @@
 import { getType, isObject } from '../reactivity/index.js'
 
+// 文本类型节点
+export const Text = Symbol()
+
 function createRenderer(options) {
 
   const {
@@ -36,6 +39,17 @@ function createRenderer(options) {
         mountElement(n2, container)
       } else {
         patchElement(n1, n2)
+      }
+    } else if (type === Text) {
+      if (!n1) {
+        // 没有旧节点，直接创建文本节点，然后进行挂载
+        const el = n2.el = document.createTextNode(n2.children)
+        insert(el, container)
+      } else {
+        const el = n2.el = n1.el
+        if (n2.children !== n1.children) {
+          el.nodeValue = n2.children
+        }
       }
     } else if (typeof n2.type === 'object') {
       // type 是对象，描述的是组件
