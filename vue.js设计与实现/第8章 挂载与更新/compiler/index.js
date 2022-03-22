@@ -51,11 +51,20 @@ function createRenderer(options) {
   
       setElementText(container, n2.children)
     } else if (Array.isArray(n2.children)) {
-      n1.children.forEach((c) => unmount(c))
-      n2.children.forEach((c) => patch(null, c, container))
+      if (Array.isArray(n1.children)) {
+        // n1.children.forEach((c) => unmount(c))
+      } else {
+        setElementText(container, '')
+        n2.children.forEach((c) => patch(null, c, container))
+      }
     } else {
-      setElementText(container, '')
-      n2.children.forEach((c) => patch(null, c, container))
+      // setElementText(container, '')
+      // n2.children.forEach((c) => patch(null, c, container))
+      if (Array.isArray(n1.children)) {
+        n1.children.forEach((c) => unmount(c))
+      } else if (typeof n1.children === 'string') {
+        setElementText(container, '')
+      }
     }
   }
 
