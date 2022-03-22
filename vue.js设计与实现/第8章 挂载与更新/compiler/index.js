@@ -35,6 +35,7 @@ function createRenderer(options) {
       if (!n1) {
         mountElement(n2, container)
       } else {
+        console.log(n1,n2)
         patchElement(n1, n2)
       }
     } else if (typeof n2.type === 'object') {
@@ -111,6 +112,7 @@ export const renderer = createRenderer({
         // 没有 invoker ,将 invoker 缓存到 el._vei中
         if (!invoker) {
           invoker = el._vei[key] = (e) => {
+            console.log('kkkk')
             // 如果 invoker.value 是数组，遍历执行每一个事件
             if (Array.isArray(invoker.value)) {
               invoker.value.forEach((fn) => fn(e))
