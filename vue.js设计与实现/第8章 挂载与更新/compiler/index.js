@@ -44,6 +44,39 @@ function createRenderer(options) {
 
   }
 
+  function patchChildren(n1, n2, container) {
+    if (typeof n2.children === 'string') {
+      if (Array.isArray(n1.children)) {
+        n1.children.forEach((c) => unmount(c))
+      }
+  
+      setElementText(container, n2.children)
+    } else if (Array.isArray(n2.children)) {
+      n1.children.forEach((c) => unmount(c))
+      n2.children.forEach((c) => patch(null, c, container))
+    } else {
+      setElementText(container, '')
+      n2.children.forEach((c) => patch(null, c, container))
+    }
+  }
+
+  function patchElement(n1, n2) {
+    const el = n2.el = n1.el
+    const oldProps = n1.props
+    const newProps = n2.props
+    for(const key in newProps) {
+      if (newProps[key] !== oldProps[key]) {
+        patchProps(el, key, oldProps[key], newProps[key])
+      }
+    }
+    for(const key in newProps) {
+      if (!(key in newProps)) {
+        patchProps(el, key, oldProps[key], null)
+      }
+    }
+    patchChildren(n1, n2, el)
+  }
+
   function mountElement(vnode, container) {
     const el = vnode.el = createElement(vnode.type)
     if (typeof vnode.children === 'string') {
@@ -74,10 +107,6 @@ function unmount(vnode) {
   if (parent) {
     parent.removeChild(vnode.el)
   }
-}
-
-function patchElement() {
-
 }
 
 function shouldSetAsProps(el, key, value) {
