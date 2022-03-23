@@ -97,27 +97,22 @@ function createRenderer(options) {
       const newChildren = n2.children
       const oldLen = oldChildren.length
       const newLen = newChildren.length
-      // const commonLength = Math.min(oldLen, newLen)
-      // for (let i = 0; i < commonLength; i++) {
-      //   patch(oldChildren[i], newChildren[i])
-      // }
-      // // 新节点长度 大于 旧节点长度，新节点需要挂载
-      // if (newLen > oldLen) {
-      //   for (let i = commonLength; i < newLen; i++) {
-      //     patch(null, newChildren[i], container)
-      //   }
-      // } else if (oldLen > newLen) {
-      //   // 旧节点长度 大于 新节点长度，旧节点需要卸载
-      //   for (let i = commonLength; i < oldLen; i++) {
-      //     unmount(oldChildren[i])
-      //   }
-      // }
+      let lastIndex = 0
       for (let i = 0; i < newLen; i++) {
         const newValue = newChildren[i]
         for (let j = 0; j < oldLen; j++) {
           const oldValue = oldChildren[j]
           if (newValue.key === oldValue.key) {
             patch(oldValue, newValue, container)
+            if (j < lastIndex) {
+              const prevValue = newChildren[i-1]
+              if (prevValue) {
+                const anchor = prevValue.el.nextSibling
+                insert(newValue.el, container, anchor)
+              }
+            } else {
+              lastIndex = j
+            }
             break
           }
         }
