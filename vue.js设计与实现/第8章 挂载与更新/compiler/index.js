@@ -2,6 +2,9 @@ import { getType, isObject } from '../reactivity/index.js'
 
 // 文本类型节点
 export const Text = Symbol()
+// 注释类型节点
+export const Comment = Symbol()
+
 
 function createRenderer(options) {
 
@@ -12,6 +15,7 @@ function createRenderer(options) {
     patchProps,
     createText,
     setText,
+    createComment,
   } = options
 
   function render(vnode, container) {
@@ -46,6 +50,16 @@ function createRenderer(options) {
       if (!n1) {
         // 没有旧节点，直接创建文本节点，然后进行挂载
         const el = n2.el = createText(n2.children)
+        insert(el, container)
+      } else {
+        const el = n2.el = n1.el
+        if (n2.children !== n1.children) {
+          setText(el, n2.children)
+        }
+      }
+    } else if (n2.type === Comment) {
+      if (!n1) {
+        const el = n2.el = createComment(n2.children)
         insert(el, container)
       } else {
         const el = n2.el = n1.el
@@ -157,6 +171,9 @@ export const renderer = createRenderer({
   },
   createText(text) {
     return document.createTextNode(text)
+  },
+  createComment(text) {
+    return document.createComment(text)
   },
   setText(el, text) {
     el.nodeValue = text

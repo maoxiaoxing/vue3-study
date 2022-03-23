@@ -27,13 +27,22 @@
   <!-- <script src="./compiler/index.js"></script> -->
 
   <script type="module">
-    import { renderer, normalizeClass, Text } from './compiler/index.js'
+    import { renderer, normalizeClass, Text, Comment } from './compiler/index.js'
 
     const { effect, ref } = VueReactivity
 
     const vnode = {
-      type: Text,
-      children: 'text'
+      type: 'div',
+      children: [
+        {
+          type: Text,
+          children: 'text'
+        }, 
+        {
+          type: Comment,
+          children: 'foo'
+        }, 
+      ]
     }
 
     effect(() => {
