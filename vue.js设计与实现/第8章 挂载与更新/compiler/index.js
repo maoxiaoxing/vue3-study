@@ -4,6 +4,8 @@ import { getType, isObject } from '../reactivity/index.js'
 export const Text = Symbol()
 // 注释类型节点
 export const Comment = Symbol()
+// Fragment 类型节点
+export const Fragment = Symbol()
 
 
 function createRenderer(options) {
@@ -66,6 +68,16 @@ function createRenderer(options) {
         if (n2.children !== n1.children) {
           setText(el, n2.children)
         }
+      }
+    } else if (n2.type === Fragment) {
+      if (!n1) {
+        if (Array.isArray(n2.children)) {
+          n2.children.forEach((c) => patch(null, c, container))
+        } else {
+          patch(null, n2.children, container)
+        }
+      } else {
+        patchChildren(n1, n2, container)
       }
     } else if (typeof n2.type === 'object') {
       // type 是对象，描述的是组件
@@ -141,6 +153,14 @@ function createRenderer(options) {
 }
 
 function unmount(vnode) {
+  if (vnode.type === Fragment) {
+    if (Array.isArray(vnode.children)) {
+      vnode.children.forEach((c) => unmount(c))
+    } else {
+      unmount(vnode.children)
+    }
+    return
+  }
   const parent = vnode.el.parentNode
   if (parent) {
     parent.removeChild(vnode.el)
