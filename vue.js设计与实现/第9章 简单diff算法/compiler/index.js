@@ -36,7 +36,7 @@ function createRenderer(options) {
 
   }
 
-  function patch(n1, n2, container) {
+  function patch(n1, n2, container, anchor) {
     if (n1 && n1.type !== n2.type) {
       unmount(n1)
       n1 = null
@@ -44,7 +44,7 @@ function createRenderer(options) {
 
     if (getType(n2.type) === 'string') {
       if (!n1) {
-        mountElement(n2, container)
+        mountElement(n2, container, anchor)
       } else {
         patchElement(n1, n2)
       }
@@ -100,9 +100,12 @@ function createRenderer(options) {
       let lastIndex = 0
       for (let i = 0; i < newLen; i++) {
         const newValue = newChildren[i]
+        // 代表是否在旧的一组子节点中找到可复用的节点
+        let find = false
         for (let j = 0; j < oldLen; j++) {
           const oldValue = oldChildren[j]
           if (newValue.key === oldValue.key) {
+            find = true
             patch(oldValue, newValue, container)
             if (j < lastIndex) {
               const prevValue = newChildren[i-1]
@@ -115,6 +118,17 @@ function createRenderer(options) {
             }
             break
           }
+        }
+        if (!find) {
+          const prevValue = newChildren[i-1]
+          console.log(prevValue)
+          let anchor = null
+          if (prevValue) {
+            anchor = prevValue.el.nextSibling
+          } else {
+            anchor = container.firstChild
+          }
+          patch(null, newValue, container, anchor)
         }
       }
     } else {
@@ -145,7 +159,7 @@ function createRenderer(options) {
     patchChildren(n1, n2, el)
   }
 
-  function mountElement(vnode, container) {
+  function mountElement(vnode, container, anchor) {
     const el = vnode.el = createElement(vnode.type)
     if (typeof vnode.children === 'string') {
       setElementText(el, vnode.children)
@@ -161,7 +175,7 @@ function createRenderer(options) {
         patchProps(el, key, null, value)
       }
     }
-    insert(el, container)
+    insert(el, container, anchor)
   }
 
   return {
