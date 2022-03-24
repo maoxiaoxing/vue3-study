@@ -93,52 +93,53 @@ function createRenderer(options) {
   
       setElementText(container, n2.children)
     } else if (Array.isArray(n2.children)) {
-      const oldChildren = n1.children
-      const newChildren = n2.children
-      const oldLen = oldChildren.length
-      const newLen = newChildren.length
-      let lastIndex = 0
-      for (let i = 0; i < newLen; i++) {
-        const newValue = newChildren[i]
-        // 代表是否在旧的一组子节点中找到可复用的节点
-        let find = false
-        for (let j = 0; j < oldLen; j++) {
-          const oldValue = oldChildren[j]
-          if (newValue.key === oldValue.key) {
-            find = true
-            patch(oldValue, newValue, container)
-            if (j < lastIndex) {
-              const prevValue = newChildren[i-1]
-              if (prevValue) {
-                const anchor = prevValue.el.nextSibling
-                insert(newValue.el, container, anchor)
-              }
-            } else {
-              lastIndex = j
-            }
-            break
-          }
-        }
-        if (!find) {
-          const prevValue = newChildren[i-1]
-          console.log(prevValue)
-          let anchor = null
-          if (prevValue) {
-            anchor = prevValue.el.nextSibling
-          } else {
-            anchor = container.firstChild
-          }
-          patch(null, newValue, container, anchor)
-        }
-      }
+      // const oldChildren = n1.children
+      // const newChildren = n2.children
+      // const oldLen = oldChildren.length
+      // const newLen = newChildren.length
+      // let lastIndex = 0
+      // for (let i = 0; i < newLen; i++) {
+      //   const newValue = newChildren[i]
+      //   // 代表是否在旧的一组子节点中找到可复用的节点
+      //   let find = false
+      //   for (let j = 0; j < oldLen; j++) {
+      //     const oldValue = oldChildren[j]
+      //     if (newValue.key === oldValue.key) {
+      //       find = true
+      //       patch(oldValue, newValue, container)
+      //       if (j < lastIndex) {
+      //         const prevValue = newChildren[i-1]
+      //         if (prevValue) {
+      //           const anchor = prevValue.el.nextSibling
+      //           insert(newValue.el, container, anchor)
+      //         }
+      //       } else {
+      //         lastIndex = j
+      //       }
+      //       break
+      //     }
+      //   }
+      //   if (!find) {
+      //     const prevValue = newChildren[i-1]
+      //     console.log(prevValue)
+      //     let anchor = null
+      //     if (prevValue) {
+      //       anchor = prevValue.el.nextSibling
+      //     } else {
+      //       anchor = container.firstChild
+      //     }
+      //     patch(null, newValue, container, anchor)
+      //   }
+      // }
 
-      for(let i = 0; i < oldLen; i++) {
-        const oldValue = oldChildren[i]
-        const has = newChildren.find((vnode) => vnode.key === oldValue.key)
-        if (!has) {
-          unmount(oldValue)
-        }
-      }
+      // for(let i = 0; i < oldLen; i++) {
+      //   const oldValue = oldChildren[i]
+      //   const has = newChildren.find((vnode) => vnode.key === oldValue.key)
+      //   if (!has) {
+      //     unmount(oldValue)
+      //   }
+      // }
+      patchKeyChildren(n1, n2, container)
     } else {
       // setElementText(container, '')
       // n2.children.forEach((c) => patch(null, c, container))
@@ -148,6 +149,37 @@ function createRenderer(options) {
         setElementText(container, '')
       }
     }
+  }
+
+  function patchKeyChildren(n1, n2, container) {
+    const oldChildren = n1.children
+    const newChildren = n2.children
+    let oldStartIdx = 0
+    let oldEndIdx = oldChildren.length - 1
+    let newStartIdx = 0
+    let newEndIdx = newChildren.length - 1
+
+    let oldStartVNode = oldChildren[oldStartIdx]
+    let oldEndVNode = oldChildren[oldEndIdx]
+    let newStartVNode = newChildren[newStartIdx]
+    let newEndVNode = newChildren[newEndIdx]
+
+    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+      if (oldStartVNode.key === newStartVNode.key) {
+
+      } else if (oldEndVNode.key === newEndVNode.key) {
+  
+      } else if (oldStartVNode.key === newEndVNode.key) {
+  
+      } else if (oldEndVNode.key === newStartVNode.key) {
+        patch(oldEndVNode, newStartVNode, container)
+        // oldEndVNode.el 移动到 oldStartVNode.el 前面
+        insert(oldEndVNode.el, container, oldStartVNode.el)
+        oldEndVNode = oldChildren[--oldEndIdx]
+        newStartVNode = newChildren[++newStartIdx]
+      }
+    }
+
   }
 
   function patchElement(n1, n2) {
