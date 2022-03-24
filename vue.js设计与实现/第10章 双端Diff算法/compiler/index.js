@@ -168,7 +168,9 @@ function createRenderer(options) {
       if (oldStartVNode.key === newStartVNode.key) {
 
       } else if (oldEndVNode.key === newEndVNode.key) {
-  
+        patch(oldEndVNode, newEndVNode, container)
+        oldEndVNode = oldChildren[--oldEndIdx]
+        newEndVNode = newChildren[--newEndIdx]
       } else if (oldStartVNode.key === newEndVNode.key) {
   
       } else if (oldEndVNode.key === newStartVNode.key) {
