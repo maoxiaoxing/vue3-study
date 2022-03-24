@@ -131,6 +131,14 @@ function createRenderer(options) {
           patch(null, newValue, container, anchor)
         }
       }
+
+      for(let i = 0; i < oldLen; i++) {
+        const oldValue = oldChildren[i]
+        const has = newChildren.find((vnode) => vnode.key === oldValue.key)
+        if (!has) {
+          unmount(oldValue)
+        }
+      }
     } else {
       // setElementText(container, '')
       // n2.children.forEach((c) => patch(null, c, container))
