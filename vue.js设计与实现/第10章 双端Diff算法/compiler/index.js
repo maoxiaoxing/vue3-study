@@ -166,6 +166,7 @@ function createRenderer(options) {
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (oldStartVNode.key === newStartVNode.key) {
+        // 头部老节点 和 头部新节点 相等 不需要操作
         patch(oldStartVNode, newStartVNode, container)
         oldStartVNode = oldChildren[++oldStartIdx]
         newStartVNode = newChildren[++newStartIdx]
@@ -184,6 +185,15 @@ function createRenderer(options) {
         insert(oldEndVNode.el, container, oldStartVNode.el)
         oldEndVNode = oldChildren[--oldEndIdx]
         newStartVNode = newChildren[++newStartIdx]
+      } else {
+        const idxInOld = oldChildren.findIndex((node) => node.key === newStartVNode.key)
+        if (idxInOld > 0) {
+          const vnodeToMove = oldChildren[idxInOld]
+          patch(vnodeToMove, newStartVNode, container)
+          insert(vnodeToMove.el, container, oldStartVNode.el)
+          oldChildren[idxInOld] = undefined
+          newStartVNode = newChildren[++newStartIdx]
+        }
       }
     }
 
