@@ -166,13 +166,18 @@ function createRenderer(options) {
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (oldStartVNode.key === newStartVNode.key) {
-
+        patch(oldStartVNode, newStartVNode, container)
+        oldStartVNode = oldChildren[++oldStartIdx]
+        newStartVNode = newChildren[++newStartIdx]
       } else if (oldEndVNode.key === newEndVNode.key) {
         patch(oldEndVNode, newEndVNode, container)
         oldEndVNode = oldChildren[--oldEndIdx]
         newEndVNode = newChildren[--newEndIdx]
       } else if (oldStartVNode.key === newEndVNode.key) {
-  
+        patch(oldStartVNode, newEndVNode, container)
+        insert(oldStartVNode.el, container, oldEndVNode.el.nextSibling)
+        oldStartVNode = oldChildren[++oldStartIdx]
+        newEndVNode = newChildren[--newEndIdx]
       } else if (oldEndVNode.key === newStartVNode.key) {
         patch(oldEndVNode, newStartVNode, container)
         // oldEndVNode.el 移动到 oldStartVNode.el 前面
