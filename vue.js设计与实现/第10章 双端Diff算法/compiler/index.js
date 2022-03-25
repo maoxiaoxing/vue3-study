@@ -165,7 +165,11 @@ function createRenderer(options) {
     let newEndVNode = newChildren[newEndIdx]
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-      if (oldStartVNode.key === newStartVNode.key) {
+      if (!oldStartVNode) {
+        oldStartVNode = oldChildren[++oldStartIdx]
+      } else if (!oldEndVNode) {
+        oldEndVNode = newChildren[--oldEndIdx]
+      } else if (oldStartVNode.key === newStartVNode.key) {
         // 头部老节点 和 头部新节点 相等 不需要操作
         patch(oldStartVNode, newStartVNode, container)
         oldStartVNode = oldChildren[++oldStartIdx]
