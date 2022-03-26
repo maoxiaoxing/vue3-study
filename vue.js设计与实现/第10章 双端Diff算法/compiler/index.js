@@ -190,14 +190,33 @@ function createRenderer(options) {
         oldEndVNode = oldChildren[--oldEndIdx]
         newStartVNode = newChildren[++newStartIdx]
       } else {
-        const idxInOld = oldChildren.findIndex((node) => node.key === newStartVNode.key)
+        console.log(oldChildren)
+        const idxInOld = oldChildren.findIndex((node) => {
+          // console.log(node, newStartVNode)
+          return node.key === newStartVNode.key
+        })
         if (idxInOld > 0) {
           const vnodeToMove = oldChildren[idxInOld]
           patch(vnodeToMove, newStartVNode, container)
           insert(vnodeToMove.el, container, oldStartVNode.el)
           oldChildren[idxInOld] = undefined
           newStartVNode = newChildren[++newStartIdx]
+        } else {
+          // 将 newStartVNode 作为新节点挂载到头部，使用当前头部节点 oldStartVNode.el 作为锚点
+          // console.log((null, newStartVNode, container, oldStartVNode.el))
+          patch(null, newStartVNode, container, oldStartVNode.el)
         }
+        // newStartVNode = newChildren[++newStartIdx]
+      }
+    }
+
+    if (oldEndIdx < oldStartIdx && newStartIdx <= newEndIdx) {
+      // for (let i = newStartIdx; i <= newEndIdx; i++) {
+      //   patch(null, newChildren[i], container, oldStartVNode.el)
+      // }
+    } else if (newEndIdx < newStartIdx && oldStartIdx <= oldEndIdx) {
+      for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+        unmount(oldChildren[i])
       }
     }
 
