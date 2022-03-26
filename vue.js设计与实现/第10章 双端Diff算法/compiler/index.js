@@ -144,7 +144,6 @@ function createRenderer(options) {
         oldEndVNode = oldChildren[--oldEndIdx]
         newStartVNode = newChildren[++newStartIdx]
       } else {
-        console.log(oldChildren)
         const idxInOld = oldChildren.findIndex((node) => {
           // console.log(node, newStartVNode)
           return node.key === newStartVNode.key
@@ -166,8 +165,7 @@ function createRenderer(options) {
 
     if (oldEndIdx < oldStartIdx && newStartIdx <= newEndIdx) {
       for (let i = newStartIdx; i <= newEndIdx; i++) {
-        console.log(newChildren[i], 'ooo')
-        // patch(null, newChildren[i], container, oldStartVNode.el)
+        patch(null, newChildren[i], container, newStartVNode.el)
       }
     } else if (newEndIdx < newStartIdx && oldStartIdx <= oldEndIdx) {
       for (let i = oldStartIdx; i <= oldEndIdx; i++) {
