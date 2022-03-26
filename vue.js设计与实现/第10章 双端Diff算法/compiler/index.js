@@ -93,52 +93,6 @@ function createRenderer(options) {
   
       setElementText(container, n2.children)
     } else if (Array.isArray(n2.children)) {
-      // const oldChildren = n1.children
-      // const newChildren = n2.children
-      // const oldLen = oldChildren.length
-      // const newLen = newChildren.length
-      // let lastIndex = 0
-      // for (let i = 0; i < newLen; i++) {
-      //   const newValue = newChildren[i]
-      //   // 代表是否在旧的一组子节点中找到可复用的节点
-      //   let find = false
-      //   for (let j = 0; j < oldLen; j++) {
-      //     const oldValue = oldChildren[j]
-      //     if (newValue.key === oldValue.key) {
-      //       find = true
-      //       patch(oldValue, newValue, container)
-      //       if (j < lastIndex) {
-      //         const prevValue = newChildren[i-1]
-      //         if (prevValue) {
-      //           const anchor = prevValue.el.nextSibling
-      //           insert(newValue.el, container, anchor)
-      //         }
-      //       } else {
-      //         lastIndex = j
-      //       }
-      //       break
-      //     }
-      //   }
-      //   if (!find) {
-      //     const prevValue = newChildren[i-1]
-      //     console.log(prevValue)
-      //     let anchor = null
-      //     if (prevValue) {
-      //       anchor = prevValue.el.nextSibling
-      //     } else {
-      //       anchor = container.firstChild
-      //     }
-      //     patch(null, newValue, container, anchor)
-      //   }
-      // }
-
-      // for(let i = 0; i < oldLen; i++) {
-      //   const oldValue = oldChildren[i]
-      //   const has = newChildren.find((vnode) => vnode.key === oldValue.key)
-      //   if (!has) {
-      //     unmount(oldValue)
-      //   }
-      // }
       patchKeyChildren(n1, n2, container)
     } else {
       // setElementText(container, '')
@@ -200,20 +154,21 @@ function createRenderer(options) {
           patch(vnodeToMove, newStartVNode, container)
           insert(vnodeToMove.el, container, oldStartVNode.el)
           oldChildren[idxInOld] = undefined
-          newStartVNode = newChildren[++newStartIdx]
+          // newStartVNode = newChildren[++newStartIdx]
         } else {
           // 将 newStartVNode 作为新节点挂载到头部，使用当前头部节点 oldStartVNode.el 作为锚点
           // console.log((null, newStartVNode, container, oldStartVNode.el))
           patch(null, newStartVNode, container, oldStartVNode.el)
         }
-        // newStartVNode = newChildren[++newStartIdx]
+        newStartVNode = newChildren[++newStartIdx]
       }
     }
 
     if (oldEndIdx < oldStartIdx && newStartIdx <= newEndIdx) {
-      // for (let i = newStartIdx; i <= newEndIdx; i++) {
-      //   patch(null, newChildren[i], container, oldStartVNode.el)
-      // }
+      for (let i = newStartIdx; i <= newEndIdx; i++) {
+        console.log(newChildren[i], 'ooo')
+        // patch(null, newChildren[i], container, oldStartVNode.el)
+      }
     } else if (newEndIdx < newStartIdx && oldStartIdx <= oldEndIdx) {
       for (let i = oldStartIdx; i <= oldEndIdx; i++) {
         unmount(oldChildren[i])
