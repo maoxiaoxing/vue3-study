@@ -215,6 +215,40 @@ function createRenderer(options) {
       while (j <= oldEnd) {
         unmount(oldChildren[j++])
       }
+    } else {
+      const count = newEnd - j + 1
+      const source = new Array(count)
+      source.fill(-1)
+      const oldStart = j
+      const newStart = j
+      let moved = false
+      let pos = 0
+      const keyIndex = {}
+      for (let i = newStart; i <= newEnd; i++) {
+        keyIndex[newChildren[i].key] = i
+      }
+      let patched = 0
+      for (let i = oldStart; i <= oldEnd; i++) {
+        const oldVNode = oldChildren[i]
+        if (patched <= count) {
+          const k = keyIndex[oldVNode.key]
+          if (typeof k !== 'undefined') {
+            const newVNode = newChildren[k]
+            patch(oldVNode, newVNode, container)
+            patched++
+            source[k - newStart] = i
+            if (k < pos) {
+              moved = true
+            } else {
+              pos = k
+            }
+          } else {
+            unmount(oldVNode)
+          }
+        } else {
+          unmount(oldVNode)
+        }
+      }
     }
 
   }
