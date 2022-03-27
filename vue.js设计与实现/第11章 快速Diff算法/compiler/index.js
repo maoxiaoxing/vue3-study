@@ -93,7 +93,8 @@ function createRenderer(options) {
   
       setElementText(container, n2.children)
     } else if (Array.isArray(n2.children)) {
-      patchKeyChildren(n1, n2, container)
+      // patchKeyChildren(n1, n2, container)
+      patchKeyedChildren(n1, n2, container)
     } else {
       // setElementText(container, '')
       // n2.children.forEach((c) => patch(null, c, container))
@@ -145,7 +146,7 @@ function createRenderer(options) {
         newStartVNode = newChildren[++newStartIdx]
       } else {
         const idxInOld = oldChildren.findIndex((node) => {
-          // console.log(node, newStartVNode)
+          console.log(node, newStartVNode)
           return node.key === newStartVNode.key
         })
         if (idxInOld > 0) {
@@ -170,6 +171,49 @@ function createRenderer(options) {
     } else if (newEndIdx < newStartIdx && oldStartIdx <= oldEndIdx) {
       for (let i = oldStartIdx; i <= oldEndIdx; i++) {
         unmount(oldChildren[i])
+      }
+    }
+
+  }
+
+  function patchKeyedChildren(n1, n2, container) {
+    const newChildren = n2.children
+    const oldChildren = n1.children
+    let j = 0
+    let oldVNode = oldChildren[j]
+    let newVNode = newChildren[j]
+    while (oldVNode && newVNode && oldVNode.key === newVNode.key) {
+      patch(oldVNode, newVNode, container)
+      j++
+      oldVNode = oldChildren[j]
+      newVNode = newChildren[j]
+    }
+
+    let oldEnd = oldChildren.length - 1
+    let newEnd = newChildren.length - 1
+
+    oldVNode = oldChildren[oldEnd]
+    newVNode = newChildren[newEnd]
+
+    console.log(oldVNode, newVNode)
+    while (oldVNode && newVNode && oldVNode.key === newVNode.key) {
+      patch(oldVNode, newVNode, container)
+      oldEnd--
+      newEnd--
+      oldVNode = oldChildren[oldEnd]
+      newVNode = newChildren[newEnd]
+    }
+
+    // 预处理后，如果满足条件，则从 j 到 newEnd 之间的节点作为新节点插入
+    if (j > oldEnd && j <= newEnd) {
+      const anchorIndex = newEnd + 1
+      const anchor = anchorIndex < newChildren.length ? newChildren[anchorIndex].el : null
+      while (j <= newEnd) {
+        patch(null, newChildren[j++], container, anchor)
+      }
+    } else if (j > newEnd && j <= oldEnd) {
+      while (j <= oldEnd) {
+        unmount(oldChildren[j++])
       }
     }
 
