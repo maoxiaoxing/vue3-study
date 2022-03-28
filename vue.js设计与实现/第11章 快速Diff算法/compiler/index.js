@@ -249,6 +249,10 @@ function createRenderer(options) {
           unmount(oldVNode)
         }
       }
+
+      if (moved) {
+        
+      }
     }
 
   }

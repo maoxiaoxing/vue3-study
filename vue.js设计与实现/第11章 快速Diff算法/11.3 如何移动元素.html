@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #btn {
+      width: 60px;
+      height: 30px;
+      /* border: 1px solid; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <!-- <div id="btn">++</div>
+  <p id="box">123</p> -->
+  
+  <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
+  <!-- <script src="./compiler/index.js"></script> -->
+
+  <script type="module">
+    import { renderer, normalizeClass } from './compiler/index.js'
+
+    const { effect, ref } = VueReactivity
+
+    const oldVnode = {
+      type: 'div',
+      children: [
+        { type: 'p', key: 1, children: '1' },
+        { type: 'p', key: 2, children: '2' },
+        { type: 'p', key: 3, children: '3' },
+        { type: 'p', key: 4, children: '4' },
+        { type: 'p', key: 6, children: '6' },
+        { type: 'p', key: 5, children: '5' },
+      ]
+    }
+
+    const newVnode = {
+      type: 'div',
+      children: [
+        { type: 'p', key: 1, children: '1' },
+        { type: 'p', key: 3, children: '3' },
+        { type: 'p', key: 4, children: '4' },
+        { type: 'p', key: 2, children: '2' },
+        { type: 'p', key: 7, children: '7' },
+        { type: 'p', key: 5, children: '5' },
+      ]
+    }
+
+    const container = document.querySelector('#app')
+
+    effect(() => {
+      renderer.render(oldVnode, container)
+
+      setTimeout(() => {
+        renderer.render(newVnode, container)
+      }, 1000)
+    })
+
+  </script>
+</body>
+</html>
