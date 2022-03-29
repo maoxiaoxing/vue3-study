@@ -81,6 +81,11 @@ function createRenderer(options) {
       }
     } else if (typeof n2.type === 'object') {
       // type 是对象，描述的是组件
+      if (!n1) {
+        mountComponent(n2, container, anchor)
+      } else {
+        patchComponent(n1, n2, anchor)
+      }
     }
 
   }
@@ -311,6 +316,14 @@ function createRenderer(options) {
       }
     }
     insert(el, container, anchor)
+  }
+
+  function mountComponent (vnode, container, anchor) {
+    const componentOptions = vnode.type
+    const { render } = componentOptions
+    console.log(componentOptions)
+    const subTree = render()
+    patch(null, subTree, container, anchor)
   }
 
   return {
