@@ -252,7 +252,26 @@ function createRenderer(options) {
       }
 
       if (moved) {
-
+        const seq = getSequence(source)
+        let s = seq.length - 1
+        let i = count - 1
+        for (i; i >= 0; i--) {
+          if (source[i] === -1) {
+            const pos = i + newStart
+            const newVNode = newChildren[pos]
+            const nextPos = pos + 1
+            const anchor = nextPos < newChildren.length ? newChildren[nextPos].el : null
+            patch(null, newVNode, container, anchor)
+          } else if (i !== seq[s]) {
+            const pos = i + newStart
+            const newVNode = newChildren[pos]
+            const nextPos = pos + 1
+            const anchor = nextPos < newChildren.length ? newChildren[nextPos].el : null
+            insert(newVNode.el, container, anchor)
+          } else {
+            s--
+          }
+        }
       }
     }
 
