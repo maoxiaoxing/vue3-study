@@ -1,4 +1,4 @@
-import { getType, isObject } from '../reactivity/index.js'
+import { effect, getType, isObject, reactive } from '../reactivity/index.js'
 
 // 文本类型节点
 export const Text = Symbol()
@@ -320,10 +320,13 @@ function createRenderer(options) {
 
   function mountComponent (vnode, container, anchor) {
     const componentOptions = vnode.type
-    const { render } = componentOptions
-    console.log(componentOptions)
-    const subTree = render()
-    patch(null, subTree, container, anchor)
+    const { render, data } = componentOptions
+    const state = reactive(data())
+
+    effect(() => {
+      const subTree = render.call(state, state)
+      patch(null, subTree, container, anchor)
+    })
   }
 
   return {
