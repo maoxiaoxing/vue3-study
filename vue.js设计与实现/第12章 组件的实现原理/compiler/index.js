@@ -326,6 +326,8 @@ function createRenderer(options) {
     effect(() => {
       const subTree = render.call(state, state)
       patch(null, subTree, container, anchor)
+    }, {
+      scheduler: queueJob,
     })
   }
 
@@ -334,6 +336,29 @@ function createRenderer(options) {
     hydrate,
   }
 }
+
+// 任务缓存队列，对响应式 effectFn 进行去重
+const queue = new Set()
+// 代表正在刷新任务队列
+let isFlushing = false
+const p = Promise.resolve()
+
+function queueJob(job) {
+  queue.add(job)
+  console.log(queue)
+  if (!isFlushing) {
+    isFlushing = true
+    p.then(() => {
+      try {
+        queue.forEach((job) => job())
+      } finally {
+        isFlushing = false
+        queue.length = 0
+      }
+    })
+  }
+}
+
 
 function unmount(vnode) {
   if (vnode.type === Fragment) {

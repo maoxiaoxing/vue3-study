@@ -36,8 +36,10 @@
       data() {
         return {foo: 1}
       },
-      render() {
+      render(state) {
         console.log(this)
+        state.foo = 2
+        state.foo = 3
         return {
           type: 'div',
           children: `foo 的值：${this.foo}`
@@ -57,7 +59,7 @@
       // setTimeout(() => {
       //   renderer.render(newVnode, container)
       // }, 1000)
-      
+
     })
 
   </script>
