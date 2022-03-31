@@ -28,7 +28,7 @@
 
   <script type="module">
     import { renderer, normalizeClass } from './compiler/index.js'
-    import { effect, ref, reactive } from './reactivity/index.js'
+    import { effect, ref, reactive } from './reactivity/reactivity.js'
 
     // const { effect, ref } = VueReactivity
 
@@ -54,12 +54,14 @@
     const container = document.querySelector('#app')
 
     const foo = reactive({
-      bar: 'baz'
+      bar: {
+        kk: 123
+      }
     })
 
     effect(() => {
-      // renderer.render(oldVnode, container)
-      foo.bar = '000'
+      renderer.render(oldVnode, container)
+      // foo.bar = '000'
 
       // setTimeout(() => {
       //   renderer.render(newVnode, container)
@@ -70,9 +72,6 @@
         console.log('33')
       }
     })
-
-    foo.bar = '99'
-    console.log(foo)
 
   </script>
 </body>
