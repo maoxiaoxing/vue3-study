@@ -26,6 +26,10 @@ export const cacheStringFunction = (fn) => {
         return hit || (cache[str] = fn(str));
     });
 };
+export const getType = (proto) => {
+    const type = Object.prototype.toString.call(proto).toLowerCase()
+    return type.slice(8, type.length - 1)
+};
 /**
  * @private
  */
@@ -661,7 +665,7 @@ function getTargetType(value) {
         ? 0 /* INVALID */
         : targetTypeMap(toRawType(value));
 }
-function reactive(target) {
+export function reactive(target) {
     // if trying to observe a readonly proxy, return the readonly version.
     if (target && target["__v_isReadonly" /* IS_READONLY */]) {
         return target;
@@ -673,7 +677,7 @@ function reactive(target) {
  * level properties are reactive. It also does not auto-unwrap refs (even at the
  * root level).
  */
-function shallowReactive(target) {
+export function shallowReactive(target) {
     return createReactiveObject(target, false, shallowReactiveHandlers, shallowCollectionHandlers);
 }
 /**

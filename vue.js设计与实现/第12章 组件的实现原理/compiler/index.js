@@ -1,4 +1,4 @@
-import { effect, getType, isObject, reactive } from '../reactivity/index.js'
+import { effect, getType, isObject, reactive } from '../reactivity/reactivity.js'
 
 // 文本类型节点
 export const Text = Symbol()
@@ -111,6 +111,7 @@ function createRenderer(options) {
     }
   }
 
+  // 双指针遍历
   function patchKeyChildren(n1, n2, container) {
     const oldChildren = n1.children
     const newChildren = n2.children
@@ -343,9 +344,10 @@ const queue = new Set()
 let isFlushing = false
 const p = Promise.resolve()
 
+// 调度器，将任务添加到缓冲队列中，开始刷新队列
 function queueJob(job) {
   queue.add(job)
-  console.log(queue)
+  console.log(queue, 'queue')
   if (!isFlushing) {
     isFlushing = true
     p.then(() => {
