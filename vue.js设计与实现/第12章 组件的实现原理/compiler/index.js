@@ -321,12 +321,41 @@ function createRenderer(options) {
 
   function mountComponent (vnode, container, anchor) {
     const componentOptions = vnode.type
-    const { render, data } = componentOptions
+    const { render, data, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated } = componentOptions
+
+    // 组件创建之前
+    beforeCreate && beforeCreate()
     const state = reactive(data())
+
+    const instance = {
+      state,
+      isMounted: false,
+      subTree: null,
+    }
+    vnode.component = instance
+
+    // 组件已经创建
+    created && created.call(state)
 
     effect(() => {
       const subTree = render.call(state, state)
-      patch(null, subTree, container, anchor)
+      // 检查组件是否已经被挂载
+      if (!instance.isMounted) {
+        // 组件更新之前
+        beforeMount && beforeMount.call(state)
+        patch(null, subTree, container, anchor)
+        instance.isMounted = true
+        // 组件已经更新
+        mounted && mounted.call(state)
+      } else {
+        // 组件更新之前
+        beforeUpdate && beforeUpdate.call(state)
+        // isMounted 为true 组件已经被挂载，只需要进行更新
+        patch(instance.subTree, subTree, container, anchor)
+        // 组件更新之后
+        updated && updated.call(state)
+      }
+      instance.subTree = subTree
     }, {
       scheduler: queueJob,
     })
