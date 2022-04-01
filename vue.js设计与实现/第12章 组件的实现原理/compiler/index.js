@@ -1,4 +1,4 @@
-import { effect, getType, isObject, reactive } from '../reactivity/reactivity.js'
+import { effect, getType, isObject, reactive, shallowReactive } from '../reactivity/reactivity.js'
 
 // 文本类型节点
 export const Text = Symbol()
@@ -319,23 +319,84 @@ function createRenderer(options) {
     insert(el, container, anchor)
   }
 
+  function patchComponent (n1, n2, anchor) {
+    const instance = (n2.component = n1.component)
+    const {
+      props
+    } = instance
+    if (hasPropsChanged(n1.props, n2.props)) {
+      const [nextProps] = resolveProps(n2.type.props, n2.props)
+      for (const k in nextProps) {
+        props[k] = nextProps[k]
+      }
+      for (const k in props) {
+        if (!(k in nextProps)) {
+          delete props[k]
+        }
+      }
+    }
+  }
+
   function mountComponent (vnode, container, anchor) {
     const componentOptions = vnode.type
-    const { render, data, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated } = componentOptions
+    const { 
+      render,
+      data, 
+      beforeCreate, 
+      created, 
+      beforeMount, 
+      mounted, 
+      beforeUpdate, 
+      updated,
+      props: propsOption
+    } = componentOptions
 
     // 组件创建之前
     beforeCreate && beforeCreate()
     const state = reactive(data())
 
+    const [props, attrs] = resolveProps(propsOption, vnode.props)
+
     const instance = {
       state,
+      props: shallowReactive(props),
       isMounted: false,
       subTree: null,
     }
     vnode.component = instance
 
+    const renderContext = new Proxy(instance, {
+      get (t, k, r) {
+        const {
+          state,
+          props,
+        } = t
+        if (state && k in props) {
+          return state[k]
+        } else if (k in props) {
+          return props[k]
+        } else {
+          console.error('不存在')
+        }
+      },
+      set (t, k, v, r) {
+        const {
+          state,
+          props,
+        } = t
+        if (state && k in props) {
+          state[k] = v
+        } else if (k in props) {
+          props[k] = v
+        } else {
+          console.error('不存在')
+        }
+      }
+    })
+
+    console.log(renderContext, 'renderContext')
     // 组件已经创建
-    created && created.call(state)
+    created && created.call(renderContext)
 
     effect(() => {
       const subTree = render.call(state, state)
@@ -365,6 +426,40 @@ function createRenderer(options) {
     render,
     hydrate,
   }
+}
+
+function hasPropsChanged (prevProps, nextProps) {
+  const nextKeys = Object.keys(nextProps)
+  if (nextKeys.length !== Object.keys(prevProps).length) {
+    return true
+  }
+
+  for (let i = 0; i < nextKeys.length; i++) {
+    const key = nextKeys[i]
+    if (nextProps[key] !== prevProps[key]) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
+ * 
+ * @param {*} options 组件接收的 props
+ * @param {*} propsData 传入组件的 props
+ * @returns 
+ */
+function resolveProps(options, propsData) {
+  const props = {}
+  const attrs = {}
+  for (const key in propsData) {
+    if (key in options) {
+      props[key] = propsData[key]
+    } else {
+      attrs[key] = propsData[key]
+    }
+  }
+  return [props, attrs]
 }
 
 // 任务缓存队列，对响应式 effectFn 进行去重
