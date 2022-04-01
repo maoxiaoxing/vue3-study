@@ -58,7 +58,10 @@
     const oldVnode = {
       type: myComp,
       props: {
-        title: 'foo'
+        title: 'foo',
+        onChange: (c) => {
+          console.log(c, 'c')
+        }
       }
     }
 

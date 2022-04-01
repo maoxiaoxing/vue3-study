@@ -367,6 +367,7 @@ function createRenderer(options) {
     function emit (event, ...payload) {
       const eventName = `on${event[0].toUpperCase() + event.slice(1)}`
       const handler = instance.props[eventName]
+      console.log(eventName, 'kk')
       if (handler) {
         handler(...payload)
       } else {
