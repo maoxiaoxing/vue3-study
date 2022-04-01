@@ -1,4 +1,4 @@
-import { effect, getType, isObject, reactive, shallowReactive } from '../reactivity/reactivity.js'
+import { effect, getType, isObject, reactive, shallowReactive, shallowReadonly } from '../reactivity/reactivity.js'
 
 // 文本类型节点
 export const Text = Symbol()
@@ -348,13 +348,13 @@ function createRenderer(options) {
       mounted, 
       beforeUpdate, 
       updated,
-      props: propsOption
+      props: propsOption,
+      setup,
     } = componentOptions
 
     // 组件创建之前
     beforeCreate && beforeCreate()
-    const state = reactive(data())
-
+    const state = data ? reactive(data()) : null
     const [props, attrs] = resolveProps(propsOption, vnode.props)
 
     const instance = {
@@ -362,6 +362,15 @@ function createRenderer(options) {
       props: shallowReactive(props),
       isMounted: false,
       subTree: null,
+    }
+    const setupContext = { attrs }
+    const setupResult = setup(shallowReadonly(instance.props), setupContext)
+    let setupState = null
+    if (typeof setupResult === 'function') {
+      if (render) console.error('setup 函数返回渲染函数，render选项将被忽略')
+      render = setupResult
+    } else {
+      setupState = setupContext
     }
     vnode.component = instance
 
@@ -371,10 +380,13 @@ function createRenderer(options) {
           state,
           props,
         } = t
-        if (state && k in props) {
+        console.log(k, props)
+        if (state && k in state) {
           return state[k]
         } else if (k in props) {
           return props[k]
+        } else if (setupState && k in setupState) {
+          return setupState[k]
         } else {
           console.error('不存在')
         }
@@ -384,22 +396,23 @@ function createRenderer(options) {
           state,
           props,
         } = t
-        if (state && k in props) {
+        if (state && k in state) {
           state[k] = v
         } else if (k in props) {
           props[k] = v
+        } else if (setupState && k in setupState) {
+          setupState[k] = v
         } else {
           console.error('不存在')
         }
       }
     })
 
-    console.log(renderContext, 'renderContext')
     // 组件已经创建
     created && created.call(renderContext)
 
     effect(() => {
-      const subTree = render.call(state, state)
+      const subTree = render.call(renderContext, state)
       // 检查组件是否已经被挂载
       if (!instance.isMounted) {
         // 组件更新之前

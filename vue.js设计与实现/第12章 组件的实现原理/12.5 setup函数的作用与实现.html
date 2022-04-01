@@ -34,43 +34,27 @@
 
     const myComp = {
       name: 'MyComp',
-      props: {
-        title: String
-      },
-      data() {
-        return {foo: 1}
-      },
-      created() {
-        // console.log(this, 'this')
-      },
-      mounted() {
-        // console.log(this, 'jkjfks')
-        // this.foo = 9
+      setup() {
+        const count = ref(0)
+        return {
+          count,
+        }
       },
       render(ctx) {
         console.log(ctx)
         // this.foo = 2
         return {
           type: 'div',
-          children: `foo 的值：${ctx.title}`
+          children: `foo 的值：${this.count}`
         }
       }
     }
 
     const oldVnode = {
       type: myComp,
-      props: {
-        title: 'A big title'
-      }
     }
 
     const container = document.querySelector('#app')
-
-    const foo = reactive({
-      bar: {
-        kk: 123
-      }
-    })
 
     effect(() => {
       renderer.render(oldVnode, container)
