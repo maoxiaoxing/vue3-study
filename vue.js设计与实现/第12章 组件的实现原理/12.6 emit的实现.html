@@ -39,6 +39,7 @@
       },
       setup(props, ctx) {
         console.log(props, ctx)
+        ctx.emit('change', 2)
         const count = ref(0)
         return {
           count,
@@ -57,7 +58,10 @@
     const oldVnode = {
       type: myComp,
       props: {
-        title: 'foo'
+        title: 'foo',
+        onChange: (c) => {
+          console.log(c, 'c')
+        }
       }
     }
 
