@@ -363,7 +363,18 @@ function createRenderer(options) {
       isMounted: false,
       subTree: null,
     }
-    const setupContext = { attrs }
+
+    function emit (event, ...payload) {
+      const eventName = `on${event[0].toUpperCase() + event.slice(1)}`
+      const handler = instance.props[eventName]
+      if (handler) {
+        handler(...payload)
+      } else {
+        console.error('事件不存在')
+      }
+    }
+
+    const setupContext = { attrs, emit }
     const setupResult = setup(shallowReadonly(instance.props), setupContext)
     let setupState = null
     if (typeof setupResult === 'function') {
@@ -466,7 +477,7 @@ function resolveProps(options, propsData) {
   const props = {}
   const attrs = {}
   for (const key in propsData) {
-    if (key in options) {
+    if (key in options || key.startsWith('on')) {
       props[key] = propsData[key]
     } else {
       attrs[key] = propsData[key]

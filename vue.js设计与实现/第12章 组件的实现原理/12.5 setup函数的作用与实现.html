@@ -34,7 +34,12 @@
 
     const myComp = {
       name: 'MyComp',
-      setup() {
+      props: {
+        title: String
+      },
+      setup(props, ctx) {
+        console.log(props, ctx)
+        ctx.emit('change', 2)
         const count = ref(0)
         return {
           count,
@@ -52,6 +57,9 @@
 
     const oldVnode = {
       type: myComp,
+      props: {
+        title: 'foo'
+      }
     }
 
     const container = document.querySelector('#app')
