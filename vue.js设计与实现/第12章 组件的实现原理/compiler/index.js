@@ -356,12 +356,14 @@ function createRenderer(options) {
     beforeCreate && beforeCreate()
     const state = data ? reactive(data()) : null
     const [props, attrs] = resolveProps(propsOption, vnode.props)
+    const slots = vnode.children || {}
 
     const instance = {
       state,
       props: shallowReactive(props),
       isMounted: false,
       subTree: null,
+      slots,
     }
 
     function emit (event, ...payload) {
@@ -375,7 +377,7 @@ function createRenderer(options) {
       }
     }
 
-    const setupContext = { attrs, emit }
+    const setupContext = { attrs, emit, slots }
     const setupResult = setup(shallowReadonly(instance.props), setupContext)
     let setupState = null
     if (typeof setupResult === 'function') {
@@ -392,6 +394,7 @@ function createRenderer(options) {
           state,
           props,
         } = t
+        if (k === '$slots') return slots
         console.log(k, props)
         if (state && k in state) {
           return state[k]
