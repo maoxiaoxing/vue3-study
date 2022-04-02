@@ -1,4 +1,5 @@
 import { effect, getType, isObject, reactive, shallowReactive, shallowReadonly } from '../reactivity/reactivity.js'
+import { setCurrentInstance } from '../runtime-core/index.js'
 
 // 文本类型节点
 export const Text = Symbol()
@@ -364,6 +365,7 @@ function createRenderer(options) {
       isMounted: false,
       subTree: null,
       slots,
+      mounted: [], // 在组件实例中添加 mounted 数组，存储通过onMounted函数注册的生命周期函数
     }
 
     function emit (event, ...payload) {
@@ -378,7 +380,9 @@ function createRenderer(options) {
     }
 
     const setupContext = { attrs, emit, slots }
+    setCurrentInstance(instance)
     const setupResult = setup(shallowReadonly(instance.props), setupContext)
+    setCurrentInstance(null)
     let setupState = null
     if (typeof setupResult === 'function') {
       if (render) console.error('setup 函数返回渲染函数，render选项将被忽略')
@@ -436,6 +440,8 @@ function createRenderer(options) {
         instance.isMounted = true
         // 组件已经更新
         mounted && mounted.call(state)
+        console.log(instance.mounted, 'kkkkkk')
+        instance.mounted && instance.mounted.forEach((hook) => hook.call(renderContext))
       } else {
         // 组件更新之前
         beforeUpdate && beforeUpdate.call(state)
