@@ -50,9 +50,18 @@
     }
 
     const asyncComp = defineAsyncComponent({
-      loader: () => new Promise((r) => r()),
+      loader: () => new Promise((resolve, reject) => {
+        resolve(myComp)
+      }),
       timeout: 2000,
-      errorComponent: myComp
+      errorComponent: myComp,
+      loadingComponent: {
+        setup() {
+          return () => {
+            return { type: 'h2', children: 'Loading...' }
+          }
+        }
+      }
     })
     console.log(asyncComp, 'asyncComp')
 

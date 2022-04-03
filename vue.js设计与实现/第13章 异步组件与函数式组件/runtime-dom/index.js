@@ -15,6 +15,16 @@ export function defineAsyncComponent (options) {
     setup() {
       const loaded = ref(false)
       const error = shallowRef(null)
+      // 代表组件正在加载
+      const loading = ref(false)
+      let loadingTimer = null
+      if (options.delay) {
+        loadingTimer = setTimeout(() => {
+          loading.value = true
+        }, options.delay)
+      } else {
+        loading.value = true
+      }
 
       loader()
         .then((c) => {
@@ -22,6 +32,10 @@ export function defineAsyncComponent (options) {
           loaded.value = true
         })
         .catch((err) => error.value = err)
+        .finally(() => {
+          loading.value = false
+          clearTimeout(loadingTimer)
+        })
       let timer = null
       if (options.timeout) {
         timer = setTimeout(() => {
@@ -38,6 +52,8 @@ export function defineAsyncComponent (options) {
           return { type: InnerComp }
         } else if (error.value && options.errorComponent) {
           return { type: options.errorComponent, props: { error: error.value } }
+        } else if (loading.value && options.loadingComponent) {
+          return { type: options.loadingComponent }
         } else {
           return placeholder
         }

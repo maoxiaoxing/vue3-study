@@ -528,6 +528,9 @@ function unmount(vnode) {
       unmount(vnode.children)
     }
     return
+  } else if (typeof vnode.type === 'object') {
+    unmount(vnode.component.subTree)
+    return
   }
 
   const parent = vnode.el && vnode.el.parentNode
