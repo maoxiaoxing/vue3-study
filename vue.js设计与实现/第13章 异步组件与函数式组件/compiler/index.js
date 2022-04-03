@@ -340,7 +340,7 @@ function createRenderer(options) {
 
   function mountComponent (vnode, container, anchor) {
     const componentOptions = vnode.type
-    const { 
+    let { 
       render,
       data, 
       beforeCreate, 
@@ -529,7 +529,8 @@ function unmount(vnode) {
     }
     return
   }
-  const parent = vnode.el.parentNode
+
+  const parent = vnode.el && vnode.el.parentNode
   if (parent) {
     parent.removeChild(vnode.el)
   }

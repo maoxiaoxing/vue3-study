@@ -30,44 +30,34 @@
     import { renderer, normalizeClass } from './compiler/index.js'
     import { effect, ref, reactive } from './reactivity/reactivity.js'
     import { onMounted } from './runtime-core/index.js'
+    import { defineAsyncComponent } from './runtime-dom/index.js'
 
     // const { effect, ref } = VueReactivity
 
     const myComp = {
       name: 'MyComp',
-      props: {
-        title: String
-      },
-      setup(props, ctx) {
-        console.log(props, ctx)
-        ctx.emit('change', 2)
-        const count = ref(0)
+      setup() {
 
-        onMounted(function ()  {
-          console.log('mounted', this)
-        })
-        return {
-          count,
-        }
       },
       render(ctx) {
-        console.log(ctx)
+
         // this.foo = 2
         return {
           type: 'div',
-          children: `foo 的值：${this.count}`
+          children: `foo 的值：bar`
         }
       }
     }
 
+    const asyncComp = defineAsyncComponent({
+      loader: () => new Promise((r) => r()),
+      timeout: 2000,
+      errorComponent: myComp
+    })
+    console.log(asyncComp, 'asyncComp')
+
     const oldVnode = {
-      type: myComp,
-      props: {
-        title: 'foo',
-        onChange: (c) => {
-          console.log(c, 'c')
-        }
-      }
+      type: asyncComp,
     }
 
     const container = document.querySelector('#app')
@@ -80,10 +70,6 @@
       //   renderer.render(newVnode, container)
       // }, 1000)
 
-    }, {
-      scheduler: () => {
-        console.log('33')
-      }
     })
 
   </script>
