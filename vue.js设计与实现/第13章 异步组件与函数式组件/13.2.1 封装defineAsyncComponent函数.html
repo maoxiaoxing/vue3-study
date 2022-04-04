@@ -51,10 +51,13 @@
 
     const asyncComp = defineAsyncComponent({
       loader: () => new Promise((resolve, reject) => {
-        resolve(myComp)
+        setTimeout(() => {
+          resolve(myComp)
+        }, 2000)
       }),
       timeout: 2000,
-      errorComponent: myComp,
+      delay: 200,
+      // errorComponent: myComp,
       loadingComponent: {
         setup() {
           return () => {
