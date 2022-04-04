@@ -80,7 +80,7 @@ function createRenderer(options) {
       } else {
         patchChildren(n1, n2, container)
       }
-    } else if (typeof n2.type === 'object') {
+    } else if (typeof n2.type === 'object' || typeof n2.type === 'function') {
       // type 是对象，描述的是组件
       if (!n1) {
         mountComponent(n2, container, anchor)
@@ -339,7 +339,18 @@ function createRenderer(options) {
   }
 
   function mountComponent (vnode, container, anchor) {
-    const componentOptions = vnode.type
+    // 检查是否是函数式组件
+    const isFunctional = typeof vnode.type === 'function'
+    
+    let componentOptions = vnode.type
+
+    if (isFunctional) {
+      componentOptions = {
+        render: vnode.type,
+        props: vnode.type.props,
+      }
+    }
+
     let { 
       render,
       data, 
@@ -381,7 +392,8 @@ function createRenderer(options) {
 
     const setupContext = { attrs, emit, slots }
     setCurrentInstance(instance)
-    const setupResult = setup(shallowReadonly(instance.props), setupContext)
+    console.log(setup, 'kkk')
+    const setupResult = setup && setup(shallowReadonly(instance.props), setupContext)
     setCurrentInstance(null)
     let setupState = null
     if (typeof setupResult === 'function') {
@@ -399,7 +411,7 @@ function createRenderer(options) {
           props,
         } = t
         if (k === '$slots') return slots
-        console.log(k, props)
+        console.log(k, props, 'k props')
         if (state && k in state) {
           return state[k]
         } else if (k in props) {
@@ -431,6 +443,7 @@ function createRenderer(options) {
     created && created.call(renderContext)
 
     effect(() => {
+      console.log(render, renderContext, 'render')
       const subTree = render.call(renderContext, state)
       // 检查组件是否已经被挂载
       if (!instance.isMounted) {
