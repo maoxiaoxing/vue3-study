@@ -10,6 +10,26 @@ export function defineAsyncComponent (options) {
   const { loader } = options
   // 存储异步加载的组件
   let InnerComp = null
+  let retires = 0
+
+  function load() {
+    return loader()
+      .catch((err) => {
+        if (options.onError) {
+          return new Promise((resolve, reject) => {
+            const retry = () => {
+              resolve(load())
+              retires++
+            }
+            const fail = () => reject(err)
+            options.onError(retry, fail, retires)
+          })
+        } else {
+          throw error
+        }
+      })
+  }
+
   return {
     name: 'AsyncComponentWrapper',
     setup() {
@@ -26,7 +46,7 @@ export function defineAsyncComponent (options) {
         loading.value = true
       }
 
-      loader()
+      load()
         .then((c) => {
           InnerComp = c
           loaded.value = true
