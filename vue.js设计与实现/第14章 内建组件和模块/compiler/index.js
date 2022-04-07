@@ -382,6 +382,18 @@ function createRenderer(options) {
       subTree: null,
       slots,
       mounted: [], // 在组件实例中添加 mounted 数组，存储通过onMounted函数注册的生命周期函数
+      keepAliveCtx: null, // 只有 KeepAlive 组件会有 keepAliveCtx 属性
+    }
+
+    // 检查当前组件是否是 keepAlive 组件
+    const isKeepAlive = vnode.type._isKeepAlive
+    if (isKeepAlive) {
+      isKeepAlive.keepAliveCtx = {
+        move(vnode, container, anchor) {
+          insert(vnode.component.subTree.el, container, anchor)
+        },
+        createElement,
+      }
     }
 
     function emit (event, ...payload) {
