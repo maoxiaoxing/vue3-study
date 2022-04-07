@@ -542,6 +542,10 @@ function unmount(vnode) {
     }
     return
   } else if (typeof vnode.type === 'object') {
+    if (vnode.shouldKeepAlive) {
+      // 对于需要被 keepAlive 的组件，不应该卸载，而是调用keepAlive组件的 _deActivate 函数使其失活
+      vnode.keepAliveInstance._deActivate(vnode)
+    }
     unmount(vnode.component.subTree)
     return
   }
