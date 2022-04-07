@@ -83,7 +83,12 @@ function createRenderer(options) {
     } else if (typeof n2.type === 'object' || typeof n2.type === 'function') {
       // type 是对象，描述的是组件
       if (!n1) {
-        mountComponent(n2, container, anchor)
+        // 如果组件已经被 keepAlive，则不需要重新挂载，调用 _activate 来激活它
+        if (n2.keptAlive) {
+          n2.keepAliveInstance._activate(n2, container, anchor)
+        } else {
+          mountComponent(n2, container, anchor)
+        }
       } else {
         patchComponent(n1, n2, anchor)
       }
