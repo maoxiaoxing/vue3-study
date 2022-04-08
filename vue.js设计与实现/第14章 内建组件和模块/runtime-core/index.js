@@ -16,6 +16,10 @@ export function onMounted (fn) {
 
 export const KeepAlive = {
   _isKeepAlive: true,
+  props: {
+    include: RegExp,
+    exclude: RegExp,
+  },
   setup(props, { slots }) {
     const cache = new Map()
     const instance = currentInstance
