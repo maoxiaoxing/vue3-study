@@ -42,6 +42,10 @@ export const KeepAlive = {
         return rawVNode
       }
       const cacheVNode = cache.get(rawVNode.type)
+      const name = rawVNode.type.name
+      if (name && ((props.include && !props.include.test(name) || (props.exclude && props.exclude.test(name))))) {
+        return rawVNode
+      }
       // 挂载先获取缓存组件，如果有，证明组件只需要被激活，而不是挂载
       if (cacheVNode) {
         rawVNode.component = cacheVNode.component
