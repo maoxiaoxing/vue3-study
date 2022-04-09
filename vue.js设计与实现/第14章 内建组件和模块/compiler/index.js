@@ -80,6 +80,15 @@ function createRenderer(options) {
       } else {
         patchChildren(n1, n2, container)
       }
+    } else if (typeof n2.type === 'object' && n2.type._isTeleport) {
+      n2.type.process(n1, n2, container, anchor, {
+        patch,
+        patchChildren,
+        unmount,
+        move(vnode, container, anchor) {
+          insert(vnode.component ? vnode.component.subTree.el : vnode.el, container, anchor)
+        }
+      })
     } else if (typeof n2.type === 'object' || typeof n2.type === 'function') {
       // type 是对象，描述的是组件
       if (!n1) {
