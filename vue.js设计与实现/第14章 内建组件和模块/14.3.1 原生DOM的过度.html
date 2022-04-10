@@ -20,6 +20,15 @@
     .enter-active {
       transition: transform 1s ease-in-out;
     }
+    .leave-form {
+      transform: translateX(0);
+    }
+    .leave-to {
+      transform: translateX(200px);
+    }
+    .leave-active {
+      transition: transform 1s ease-out;
+    }
   </style>
 </head>
 <body>
@@ -37,6 +46,31 @@
       requestAnimationFrame(() => {
         el.classList.remove('enter-form')
         el.classList.add('enter-to')
+
+        el.addEventListener('transitionend', () => {
+          el.classList.remove('enter-to')
+          el.classList.remove('enter-active')
+        })
+      })
+    })
+
+    el.addEventListener('click', () => {
+      const performRemove = () => el.parentNode.removeChild(el)
+
+      el.classList.add('leave-form')
+      el.classList.add('leave-active')
+      document.body.offsetHeight
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.remove('leave-form')
+          el.classList.add('leave-to')
+
+          el.addEventListener('transitionend', () => {
+            el.classList.remove('leave-to')
+            el.classList.remove('leave-active')
+            performRemove()
+          })
+        })
       })
     })
 
