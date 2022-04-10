@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+    .enter-form {
+      transform: translateX(200px);
+    }
+    .enter-to {
+      transform: translateX(0);
+    }
+    .enter-active {
+      transition: transform 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- <div class="box"></div> -->
+
+  <script>
+    const el = document.createElement('div')
+    el.classList.add('box')
+    el.classList.add('enter-form')
+    el.classList.add('enter-active')
+
+    document.body.appendChild(el)
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.classList.remove('enter-form')
+        el.classList.add('enter-to')
+      })
+    })
+
+  </script>
+</body>
+</html>
