@@ -85,3 +85,24 @@ export const Teleport = {
   }
 }
 
+export const Transition = {
+  name: 'Transition',
+  setup(props, { slots }) {
+    return () => {
+      const innerVNode = slots.default()
+      innerVNode.transition = {
+        beforeEnter(el) {
+
+        },
+        enter(el) {
+
+        },
+        leave(el, performRemove) {
+
+        }
+      }
+      return innerVNode
+    }
+  }
+}
+

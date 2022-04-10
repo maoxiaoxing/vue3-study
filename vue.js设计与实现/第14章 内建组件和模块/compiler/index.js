@@ -331,7 +331,16 @@ function createRenderer(options) {
         patchProps(el, key, null, value)
       }
     }
+
+    const needTransiton = vnode.transition
+    if (needTransiton) {
+      vnode.transition.beforeEnter(el)
+    }
+
     insert(el, container, anchor)
+    if (needTransiton) {
+      vnode.transition.enter(el)
+    }
   }
 
   function patchComponent (n1, n2, anchor) {
