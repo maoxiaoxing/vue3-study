@@ -85,6 +85,14 @@ export const Teleport = {
   }
 }
 
+export function nextFrame(callback) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      callback()
+    })
+  })
+}
+
 export const Transition = {
   name: 'Transition',
   setup(props, { slots }) {
@@ -92,13 +100,35 @@ export const Transition = {
       const innerVNode = slots.default()
       innerVNode.transition = {
         beforeEnter(el) {
-
+          // 设置初始状态，添加 enter-form 和 enter-active 类
+          el.classList.add('enter-form')
+          el.classList.add('enter-active')
         },
         enter(el) {
-
+          nextFrame(() => {
+            el.classList.remove('enter-form')
+            el.classList.add('enter-to')
+            el.addEventListener('transitionend', () => {
+              el.classList.remove('enter-to')
+              el.classList.remove('enter-active')
+            })
+          })
         },
         leave(el, performRemove) {
-
+          el.classList.add('leave-form')
+          el.classList.add('leave-active')
+          // 强制 reflow，使得初始状态生效
+          document.body.offsetHeight
+          nextFrame(() => {
+            el.classList.remove('leave-form')
+            el.classList.add('leave-to')
+            el.addEventListener('transitionend', () => {
+              el.classList.remove('leave-to')
+              el.classList.remove('leave-active')
+              // 调用 transition.leave 钩子函数的第二个参数，完成 DOM 的元素的卸载
+              performRemove()
+            })
+          })
         }
       }
       return innerVNode

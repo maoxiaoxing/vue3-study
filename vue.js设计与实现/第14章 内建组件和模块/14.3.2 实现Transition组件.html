@@ -6,15 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    #btn {
-      width: 60px;
-      height: 30px;
-      /* border: 1px solid; */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+    .enter-form {
+      transform: translateX(200px);
+    }
+    .enter-to {
+      transform: translateX(0);
+    }
+    .enter-active {
+      transition: transform 1s ease-in-out;
+    }
+    .leave-form {
+      transform: translateX(0);
+    }
+    .leave-to {
+      transform: translateX(200px);
+    }
+    .leave-active {
+      transition: transform 1s ease-out;
     }
   </style>
 </head>

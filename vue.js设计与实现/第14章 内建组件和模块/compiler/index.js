@@ -569,6 +569,7 @@ function queueJob(job) {
 
 
 function unmount(vnode) {
+  const needTransition = vnode.transition
   if (vnode.type === Fragment) {
     if (Array.isArray(vnode.children)) {
       vnode.children.forEach((c) => unmount(c))
@@ -588,7 +589,15 @@ function unmount(vnode) {
 
   const parent = vnode.el && vnode.el.parentNode
   if (parent) {
-    parent.removeChild(vnode.el)
+    // 将卸载动作封装到 performRemove 函数中
+    const performRemove = () => parent.removeChild(vnode.el)
+    if (needTransition) {
+      // 如果需要过渡处理，需要调用 transition.leave 钩子
+      // 同时将 DOM 元素和 performRemove 函数作为参数传递
+      vnode.transition.leave(vnode.el, performRemove)
+    } else {
+      performRemove()
+    }
   }
 }
 
