@@ -12,7 +12,7 @@ function isAlpha(char) {
   return char >= 'a' && char <= 'z' || char >= 'A' && char <= 'z'
 }
 
-function tokenzie(str) {
+export function tokenzie(str) {
   // 状态机当前状态
   let currentState = State.initital
   // 缓存字符

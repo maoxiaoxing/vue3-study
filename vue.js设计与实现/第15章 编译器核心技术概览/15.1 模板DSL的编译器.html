@@ -21,6 +21,7 @@
     import { effect, ref, reactive } from './reactivity/reactivity.js'
     import { onMounted, Transition } from './runtime-core/index.js'
     import { defineAsyncComponent } from './runtime-dom/index.js'
+    import { tokenzie } from './compiler-core/index.js'
 
     // const { effect, ref } = VueReactivity
 
@@ -29,6 +30,7 @@
           <h1 v-if="ok">Vue Template</h1>  
         </div>
       `
+      console.log(tokenzie('<p>Vue</p>'))
 
   </script>
 </body>
