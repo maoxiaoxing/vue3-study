@@ -160,26 +160,43 @@ export function dump (node, indent = 0) {
   }
 }
 
-export function traverseNode(ast) {
+export function traverseNode(ast, context) {
   const currentNode = ast
-
-  if (currentNode.type === 'Element' && currentNode.tag === 'p') {
-    currentNode.tag = 'h1'
-  }
-
-  if (currentNode.type === 'Text') {
-    currentNode.content = currentNode.content.repeat(2)
+  console.log(context)
+  const transforms = context.nodeTransforms
+  for (let i = 0; i< transforms.length; i++) {
+    transforms[i](currentNode, context)
   }
 
   const children = currentNode.children
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      traverseNode(children[i])
+      traverseNode(children[i], context)
     }
   }
 }
 
 export function transform (ast) {
-  traverseNode(ast)
+  const context = {
+    nodeTransforms: [
+      transformElement,
+      transformText,
+    ]
+  }
+  traverseNode(ast, context)
   console.log(dump(ast))
+}
+
+// 转换标签
+function transformElement (node) {
+  if (node.type === 'Element' && node.tag === 'p') {
+    node.tag = 'h1'
+  }
+}
+
+// 转换文本
+function transformText (node) {
+  if (node.type === 'Text') {
+    node.content = node.content.repeat(2)
+  }
 }
