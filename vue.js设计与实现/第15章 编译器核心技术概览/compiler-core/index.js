@@ -159,3 +159,27 @@ export function dump (node, indent = 0) {
     node.children.forEach(n => dump(n, indent+2))
   }
 }
+
+export function traverseNode(ast) {
+  const currentNode = ast
+
+  if (currentNode.type === 'Element' && currentNode.tag === 'p') {
+    currentNode.tag = 'h1'
+  }
+
+  if (currentNode.type === 'Text') {
+    currentNode.content = currentNode.content.repeat(2)
+  }
+
+  const children = currentNode.children
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      traverseNode(children[i])
+    }
+  }
+}
+
+export function transform (ast) {
+  traverseNode(ast)
+  console.log(dump(ast))
+}
