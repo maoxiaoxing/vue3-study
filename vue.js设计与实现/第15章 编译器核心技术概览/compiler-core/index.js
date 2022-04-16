@@ -161,16 +161,18 @@ export function dump (node, indent = 0) {
 }
 
 export function traverseNode(ast, context) {
-  const currentNode = ast
-  console.log(context)
+  context.currentNode = ast
   const transforms = context.nodeTransforms
   for (let i = 0; i< transforms.length; i++) {
-    transforms[i](currentNode, context)
+    transforms[i](context.currentNode, context)
   }
 
-  const children = currentNode.children
+  const children = context.currentNode.children
   if (children) {
     for (let i = 0; i < children.length; i++) {
+      // 递归调用 traverseNode 转化节点之前，将当前节点设置为父节点
+      context.parent = context.currentNode
+      context.childIndex = i
       traverseNode(children[i], context)
     }
   }
