@@ -178,6 +178,9 @@ export function traverseNode(ast, context) {
 
 export function transform (ast) {
   const context = {
+    currentNode: null, // 当前正在转化的节点
+    childIndex: 0, // 增加 childIndex 存储当前节点在父节点 的 children 中的位置索引
+    parent: null, // 存储当前转换节点的父节点
     nodeTransforms: [
       transformElement,
       transformText,
