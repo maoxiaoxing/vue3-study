@@ -183,6 +183,13 @@ export function transform (ast) {
     currentNode: null, // 当前正在转化的节点
     childIndex: 0, // 增加 childIndex 存储当前节点在父节点 的 children 中的位置索引
     parent: null, // 存储当前转换节点的父节点
+    replaceNode(node) {
+      // 为了替换接地那，我们需要修改AST
+      // 找到当前节点在父节点的 children 中的位置： context.children
+      // 然后使用新节点替换即可
+      context.parent.children[context.childIndex] = node
+      context.currentNode = node
+    },
     nodeTransforms: [
       transformElement,
       transformText,
