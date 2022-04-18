@@ -162,9 +162,16 @@ export function dump (node, indent = 0) {
 
 export function traverseNode(ast, context) {
   context.currentNode = ast
+  // 1. 增加退出阶段的回调函数数组
+  const exitFns = []
   const transforms = context.nodeTransforms
   for (let i = 0; i< transforms.length; i++) {
-    transforms[i](context.currentNode, context)
+    // 2. 转换函数可以返回另一个函数，该函数作为退出节点的回调函数
+    const onExit = transforms[i](context.currentNode, context)
+    if (onExit) {
+      exitFns.push(onExit)
+    }
+    // transforms[i](context.currentNode, context)
     // 由于任何转换含糊都可能移除当前节点，因此每个转换函数执行完毕后，
     // 都应该检查当前节点是否已经被移除，如果被移除，直接返回即可
     if (!context.currentNode) return
@@ -178,6 +185,12 @@ export function traverseNode(ast, context) {
       context.childIndex = i
       traverseNode(children[i], context)
     }
+  }
+
+  // 在节点处理最后阶段执行缓存到 exitFns 中的回调函数   反序执行
+  let i = exitFns.length
+  while (i--) {
+    exitFns[i]()
   }
 }
 
