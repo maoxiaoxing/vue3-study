@@ -225,7 +225,7 @@ export function transform (ast) {
 }
 
 // 转换标签
-function transformElement (node) {
+function transformElement (node, context) {
   if (node.type === 'Element' && node.tag === 'p') {
     node.tag = 'h1'
   }
