@@ -188,7 +188,16 @@ export function transform (ast) {
       // 找到当前节点在父节点的 children 中的位置： context.children
       // 然后使用新节点替换即可
       context.parent.children[context.childIndex] = node
+      // 由于当前节点已经被新节点替换掉了，因此需要将 currentNode 更新为新节点
       context.currentNode = node
+    },
+    removeNode() {
+      if (context.parent) {
+        // 调用数组的 splice 方法，根据当前节点的索引删除当前节点
+        context.parent.children.splice(context.childIndex, 1)
+        // 将 context.currentNode 置空
+        context.currentNode = null
+      }
     },
     nodeTransforms: [
       transformElement,
