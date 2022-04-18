@@ -165,6 +165,9 @@ export function traverseNode(ast, context) {
   const transforms = context.nodeTransforms
   for (let i = 0; i< transforms.length; i++) {
     transforms[i](context.currentNode, context)
+    // 由于任何转换含糊都可能移除当前节点，因此每个转换函数执行完毕后，
+    // 都应该检查当前节点是否已经被移除，如果被移除，直接返回即可
+    if (!context.currentNode) return
   }
 
   const children = context.currentNode.children
@@ -216,8 +219,9 @@ function transformElement (node) {
 }
 
 // 转换文本
-function transformText (node) {
+function transformText (node, context) {
   if (node.type === 'Text') {
-    node.content = node.content.repeat(2)
+    // node.content = node.content.repeat(2)
+    context.removeNode()
   }
 }
