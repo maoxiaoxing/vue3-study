@@ -238,3 +238,13 @@ function transformText (node, context) {
     context.removeNode()
   }
 }
+
+// 创建 StringLiteral 节点
+export function createStringLiteral(value) {
+  return {
+    type: 'StringLiteral',
+    value,
+  }
+}
+
+
