@@ -248,18 +248,27 @@ export function createStringLiteral(value) {
 }
 
 // 创建 Identifier 节点
-export function createIdentifier(value) {
+export function createIdentifier(name) {
   return {
     type: 'Identifier',
-    value,
+    name,
   }
 }
 
 // 创建 ArrayExpression 节点
-export function createArrayExpression(value) {
+export function createArrayExpression(elements) {
   return {
     type: 'ArrayExpression',
-    value,
+    elements,
+  }
+}
+
+// 创建 CallExpression 节点
+export function createCallExpression(callee, arguments) {
+  return {
+    type: 'CallExpression',
+    callee: createIdentifier(callee),
+    arguments,
   }
 }
 
