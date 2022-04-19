@@ -255,4 +255,12 @@ export function createIdentifier(value) {
   }
 }
 
+// 创建 ArrayExpression 节点
+export function createArrayExpression(value) {
+  return {
+    type: 'ArrayExpression',
+    value,
+  }
+}
+
 
