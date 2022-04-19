@@ -247,4 +247,12 @@ export function createStringLiteral(value) {
   }
 }
 
+// 创建 Identifier 节点
+export function createIdentifier(value) {
+  return {
+    type: 'Identifier',
+    value,
+  }
+}
+
 
