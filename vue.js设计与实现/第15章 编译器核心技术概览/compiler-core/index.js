@@ -226,8 +226,30 @@ export function transform (ast) {
 
 // 转换标签
 function transformElement (node, context) {
-  if (node.type === 'Element' && node.tag === 'p') {
-    node.tag = 'h1'
+  // 将转换代码编写在退出阶段的回调函数中
+  // 这样可以保证该标签节点的子节点全部被处理完毕
+  return () => {
+    // 如果被转换的节点不是元素节点，则什么都不做
+    if (node.type !== 'Element') {
+      return
+    }
+
+    // 1. 创建 h 函数调用语句
+    // h 函数调用的第一个参数是标签名称，因此我们以 node.tag 来创建一个字符串字面量节点， 作为第一个参数
+    const callExp = createCallExpression('h', [
+      createStringLiteral(node.tag)
+    ])
+    // 2. 处理 h 函数调用的参数
+    node.children.length === 1 ?
+      // 如果当前标签节点只有一个子节点，则直接使用子节点的 jsNode 作为参数
+      callExp.arguments.push(node.children[0].jsNode) :
+      // 如果当前标签节点有多个子节点 则创建一个 ArrayExpression 节点作为参数
+      callExp.arguments.push(
+        // 数组的每个元素都是子节点的 jsNode
+        createArrayExpression(node.children.map(c => c.jsNode))
+      )
+    // 3. 将当前标签节点对应的 JavaScript AST 添加到 jsNode 属性下
+    node.jsNode = callExp
   }
 }
 
