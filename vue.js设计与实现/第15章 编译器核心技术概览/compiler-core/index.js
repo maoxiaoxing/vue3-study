@@ -390,6 +390,15 @@ export function genFunctionDecl (node, context) {
   push(`}`)
 }
 
+export function genArrayExpression (node, context) {
+  const {
+    push,
+  } = context
+  push('[')
+  genNodeList(node.elements, context)
+  push(']')
+}
+
 export function genNodeList(nodes, context) {
   const {
     push,
