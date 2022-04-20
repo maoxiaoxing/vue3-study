@@ -408,6 +408,14 @@ export function genReturnStatement(node, context) {
   genNode(node.return, context)
 }
 
+export function genStringLiteral(node, context) {
+  const {
+    push,
+  } = context
+  // 对于字符串字面量，只需要追加与 node.value 对应的字符串即可
+  push(`'${node.value}'`)
+}
+
 export function genNodeList(nodes, context) {
   const {
     push,
