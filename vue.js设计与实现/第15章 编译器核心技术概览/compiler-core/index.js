@@ -324,4 +324,39 @@ export function createCallExpression(callee, arguments) {
   }
 }
 
+export function generate(node) {
+  const context = {
+    // 存储最终生成的渲染函数代码
+    code: '',
+    // 生成代码时，通过调用 push 函数完成代码的拼接
+    push(code) {
+      context.code += code
+    },
+    currentIndent: 0, // 当前缩进的界别，初始值为0，即没有缩进
+    // 该函数用来换行，即在代码字符串的后面追加 \n 字符
+    // 另外，换行时应该保留缩进，所以我们还要追加 currentIndent * 2 个空格字符
+    newline() {
+      context.code += '\n' + `  `.repeat(context.currentIndent)
+    },
+    // 用来缩进，让 currentIndent 自增后，调用换行函数
+    deIndent() {
+      context.currentIndent--
+      context.newline()
+    }
+  }
+
+  genNode(node, context)
+  return context.node
+
+}
+
+export function compile(template) {
+  // 模板 ast
+  const ast = parse(template)
+  // 将模板 AST 转换为 JavaScript AST
+  transform(ast)
+  const code = generate(ast.jsNode)
+  return code
+}
+
 
