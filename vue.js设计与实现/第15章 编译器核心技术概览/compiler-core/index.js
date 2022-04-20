@@ -350,6 +350,46 @@ export function generate(node) {
 
 }
 
+export function genNode(node, context) {
+  switch (node.type) {
+    case 'FunctionDecl':
+      genFunctionDecl(node, context)
+      break
+    case 'ReturnStatement':
+      genReturnStatement(node, context)
+      break
+    case 'CallExpression':
+      genCallExpression(node, context)
+      break
+    case 'StringLiteral':
+      genStringLiteral(node, context)
+      break
+    case 'ArrayExpression':
+      genArrayExpression(node, context)
+      break
+  }
+}
+
+export function genFunctionDecl (node, context) {
+  // 从 context 对象中取出工具函数
+  const {
+    push,
+    indent,
+    deIndent,
+  } = context
+  // node.id 是一个标识符，用来描述函数的名称，即 node.id.name
+  push(`function ${node.id.name}`)
+  push(`(`)
+  genNodeList(node.params, context)
+  push(`)`)
+  push(`{`)
+  indent()
+  // 为函数体生成代码，递归调用 genNode 函数
+  node.body.forEach(n => genNode(n, context))
+  deIndent()
+  push(`}`)
+}
+
 export function compile(template) {
   // 模板 ast
   const ast = parse(template)
