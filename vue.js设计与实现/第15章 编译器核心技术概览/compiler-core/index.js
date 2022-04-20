@@ -390,6 +390,19 @@ export function genFunctionDecl (node, context) {
   push(`}`)
 }
 
+export function genNodeList(nodes, context) {
+  const {
+    push,
+  } = context
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i]
+    genNode(node,context)
+    if (i < nodes.length - 1) {
+      push(', ')
+    }
+  }
+}
+
 export function compile(template) {
   // 模板 ast
   const ast = parse(template)
