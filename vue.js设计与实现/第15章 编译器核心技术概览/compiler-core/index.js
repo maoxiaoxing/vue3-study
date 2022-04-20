@@ -399,6 +399,15 @@ export function genArrayExpression (node, context) {
   push(']')
 }
 
+export function genReturnStatement(node, context) {
+  const {
+    push,
+  } = context
+  // 追加 return 关键字和空格
+  push(`return `)
+  genNode(node.return, context)
+}
+
 export function genNodeList(nodes, context) {
   const {
     push,
