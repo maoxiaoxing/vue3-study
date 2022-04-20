@@ -265,6 +265,32 @@ function transformText (node, context) {
   node.jsNode = createStringLiteral(node.content)
 }
 
+export function transformRoot(node) {
+  return () => {
+    if (node.type !== 'root') {
+      return
+    }
+    // node 是根节点 根节点的第一个节点就是模板的根节点
+    // 这里暂时不考虑模板存在多个根节点
+    const vnodeJSAST = node.children[0].jsNode
+    // 创建 render 函数逇声明语句节点，将 vnodeJSAST 作为 render 函数体的返回语句
+    node.jsNode = {
+      type: 'FunctionDecl',
+      id: {
+        type: 'Identifier',
+        name: 'render',
+      },
+      params: [],
+      body: [
+        {
+          type: 'ReturnStatement',
+          return: vnodeJSAST
+        }
+      ]
+    }
+  }
+}
+
 // 创建 StringLiteral 节点
 export function createStringLiteral(value) {
   return {
