@@ -216,6 +216,7 @@ export function transform (ast) {
       }
     },
     nodeTransforms: [
+      transformRoot,
       transformElement,
       transformText,
     ]
@@ -267,7 +268,7 @@ function transformText (node, context) {
 
 export function transformRoot(node) {
   return () => {
-    if (node.type !== 'root') {
+    if (node.type !== 'Root') {
       return
     }
     // node 是根节点 根节点的第一个节点就是模板的根节点
@@ -316,11 +317,11 @@ export function createArrayExpression(elements) {
 }
 
 // 创建 CallExpression 节点
-export function createCallExpression(callee, arguments) {
+export function createCallExpression(callee, arguments1) {
   return {
     type: 'CallExpression',
     callee: createIdentifier(callee),
-    arguments,
+    arguments: arguments1,
   }
 }
 
