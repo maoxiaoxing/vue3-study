@@ -405,6 +405,7 @@ export function genReturnStatement(node, context) {
   } = context
   // 追加 return 关键字和空格
   push(`return `)
+  // 调用  genNode 函数递归生成返回代码
   genNode(node.return, context)
 }
 
@@ -414,6 +415,23 @@ export function genStringLiteral(node, context) {
   } = context
   // 对于字符串字面量，只需要追加与 node.value 对应的字符串即可
   push(`'${node.value}'`)
+}
+
+export function genCallExpression(node, context) {
+  const {
+    push,
+  } = context
+  // 取得被调用函数名称和参数列表
+  const {
+    callee,
+    arguments: args,
+  } = node
+  // 生成函数代用代码
+  push(`${callee.name}(`)
+  // 调用 genNodeList 生成参数代码
+  genNodeList(args, context)
+  // 补全括号
+  push(`)`)
 }
 
 export function genNodeList(nodes, context) {
