@@ -352,7 +352,7 @@ export function generate(node) {
   }
 
   genNode(node, context)
-  return context.node
+  return context.code
 
 }
 
