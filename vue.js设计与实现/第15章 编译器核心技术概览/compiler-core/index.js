@@ -340,6 +340,11 @@ export function generate(node) {
       context.code += '\n' + `  `.repeat(context.currentIndent)
     },
     // 用来缩进，让 currentIndent 自增后，调用换行函数
+    indent() {
+      context.currentIndent++
+      context.newline()
+    },
+    // 取消缩进，让 currentIndent 自减后，调用换行函数
     deIndent() {
       context.currentIndent--
       context.newline()
@@ -384,9 +389,11 @@ export function genFunctionDecl (node, context) {
   genNodeList(node.params, context)
   push(`)`)
   push(`{`)
+  // 缩进
   indent()
   // 为函数体生成代码，递归调用 genNode 函数
   node.body.forEach(n => genNode(n, context))
+  // 取消缩进
   deIndent()
   push(`}`)
 }
