@@ -30,6 +30,7 @@
           <h1 v-if="ok">Vue Template</h1>  
         </div>
       `
+
       const ast = parse(`<div><p>Vue</p><p>Template</p></div>`)
       console.log(ast, 'parse')
       transform(ast)
