@@ -8,6 +8,14 @@ export const State = {
   tagEndName: 6, // 结束标签名称状态
 }
 
+// 定义文本模式，作为一个状态表
+const TextModes = {
+  DATA: 'DATA',
+  RCDATA: 'RCDATA',
+  RAWTEXT: 'RAWTEXT',
+  CDATA: 'CDATA',
+}
+
 function isAlpha(char) {
   return char >= 'a' && char <= 'z' || char >= 'A' && char <= 'z'
 }
@@ -115,40 +123,57 @@ export function tokenzie(str) {
   return tokens
 }
 
+// export function parse (str) {
+//   const tokens = tokenzie(str)
+//   const root = {
+//     type: 'Root',
+//     children: []
+//   }
+//   const elementStack = [root]
+//   while (tokens.length) {
+//     const parent = elementStack[elementStack.length-1]
+//     const t = tokens[0]
+//     switch (t.type) {
+//       case 'tag':
+//         const elementNode = {
+//           type: 'Element',
+//           tag: t.name,
+//           children: []
+//         }
+//         parent.children.push(elementNode)
+//         elementStack.push(elementNode)
+//         break
+//       case 'text':
+//         const textNode = {
+//           type: 'Text',
+//           content: t.content
+//         }
+//         parent.children.push(textNode)
+//         break
+//       case 'tagEnd':
+//         elementStack.pop()
+//         break
+//     }
+//     tokens.shift()
+//   }
+//   return root
+// }
+
 export function parse (str) {
-  const tokens = tokenzie(str)
-  const root = {
+  // 定义上下文对象
+  const context = {
+    source: str, // 模板内容，用于在解析过程中进行消费
+    mode: TextModes.DATA // 解析器当前处于文本模式，初始模式为 DATA
+  }
+
+  // 调用 parseChildren 函数进行解析，返回解析后得到的子节点
+  // parseChildren 接收两个参数，第一个参数是上下文 context， 第二个参数是由父节点构成的节点栈，初始栈为空
+  const nodes = parseChildren(context, [])
+
+  return {
     type: 'Root',
-    children: []
+    children: nodes, // 使用 nodes 作为根节点的 children
   }
-  const elementStack = [root]
-  while (tokens.length) {
-    const parent = elementStack[elementStack.length-1]
-    const t = tokens[0]
-    switch (t.type) {
-      case 'tag':
-        const elementNode = {
-          type: 'Element',
-          tag: t.name,
-          children: []
-        }
-        parent.children.push(elementNode)
-        elementStack.push(elementNode)
-        break
-      case 'text':
-        const textNode = {
-          type: 'Text',
-          content: t.content
-        }
-        parent.children.push(textNode)
-        break
-      case 'tagEnd':
-        elementStack.pop()
-        break
-    }
-    tokens.shift()
-  }
-  return root
 }
 
 export function dump (node, indent = 0) {
