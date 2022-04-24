@@ -176,6 +176,10 @@ export function parse (str) {
   }
 }
 
+export function parseChildren (context, ancextors) {
+
+}
+
 export function dump (node, indent = 0) {
   const type = node.type
   const desc = node.type === 'Root' ? '' : node.type === 'Element' ? node.tag : node.content
