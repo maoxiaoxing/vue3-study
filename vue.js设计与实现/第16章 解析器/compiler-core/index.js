@@ -176,8 +176,44 @@ export function parse (str) {
   }
 }
 
-export function parseChildren (context, ancextors) {
+export function parseChildren (context, ancestors) {
+  // 定义 nodes 数组存储子节点，它将作为最终的返回值
+  const nodes = []
+  const { mode, source } = context
+  // 开启 while 循环，只要满足条件就会一直对字符串进行解析
+  while (!isEnd(context, ancestors)) {
+    let node
+    // 只有 DATA 模式和 RCDATA 模式才支持插值节点的解析
+    if (mode === TextModes.DATA && source[0] === '<') {
+      if (source[i] === '!') {
+        if (source.startsWith('<!--')) {
+          // 注释
+          node = parseComment(context)
+        } else if (source.startsWith('<![CDATA[')) {
+          node = parseCDATA(context, ancestors)
+        }
+      } else if (source[i] === '/') {
+        // 结束标签
+      } else if (/a-z/i.test(source[1])) {
+        node = parseElement(context, ancestors)
+      }
+    } else if (source.startsWith('{{')) {
+      // 解析插值
+      node = parseInterpolation(context)
+    }
 
+    // node 不存在，说明处于其他模式，即非 DATA 模式且非 RCDATA 模式
+    // 这时一切内容都作为文本处理
+    if (!node) {
+      node = parseText(context)
+    }
+
+    // 将节点天津爱到 nodes 数组中
+    nodes.push(node)
+  }
+
+  // 当 while 循环停止后，说明子节点解析完毕，返回子节点
+  return nodes
 }
 
 export function dump (node, indent = 0) {
