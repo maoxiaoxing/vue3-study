@@ -216,6 +216,16 @@ export function parseChildren (context, ancestors) {
   return nodes
 }
 
+export function parseElement () {
+  // 解析开始标签
+  const element = parseTag()
+  // 递归调用 parseChildren 函数进行标签子节点的解析
+  element.children = parseChildren()
+  // 解析结束标签
+  parseEndTag()
+  return element
+}
+
 export function dump (node, indent = 0) {
   const type = node.type
   const desc = node.type === 'Root' ? '' : node.type === 'Element' ? node.tag : node.content
