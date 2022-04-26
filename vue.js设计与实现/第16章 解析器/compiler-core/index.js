@@ -226,6 +226,17 @@ export function parseElement () {
   return element
 }
 
+export function isEnd(context, ancestors) {
+  // 当模板内容解析完毕后，停止
+  if (!context.source) return true
+  // 获取父级标签节点
+  const parent = ancestors[ancestors.length - 1]
+  // 如果遇到结束标签，并且该标签与父级标签节点同名，则停止
+  if (parent && context.startsWith(`</${parent.tag}`)) {
+    return true
+  }
+}
+
 export function dump (node, indent = 0) {
   const type = node.type
   const desc = node.type === 'Root' ? '' : node.type === 'Element' ? node.tag : node.content
