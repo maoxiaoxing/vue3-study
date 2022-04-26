@@ -220,24 +220,38 @@ export function parseChildren (context, ancestors) {
   return nodes
 }
 
-export function parseElement () {
+export function parseElement (context, ancestors) {
   // 解析开始标签
-  const element = parseTag()
+  const element = parseTag(context)
+  if (element.isSelfClosing) return element
+  ancestors.push(element)
   // 递归调用 parseChildren 函数进行标签子节点的解析
-  element.children = parseChildren()
-  // 解析结束标签
-  parseEndTag()
+  element.children = parseChildren(context, ancestors)
+  ancestors.pop()
+  if (context.source.startsWith(`</${element.tag}`)) {
+    parseTag(context, 'end')
+  } else {
+    // 缺少闭合标签
+    console.error(`${element.tag} 标签缺少闭合标签`)
+  }
   return element
 }
 
 export function isEnd(context, ancestors) {
   // 当模板内容解析完毕后，停止
   if (!context.source) return true
-  // 获取父级标签节点
+  /* // 获取父级标签节点
   const parent = ancestors[ancestors.length - 1]
   // 如果遇到结束标签，并且该标签与父级标签节点同名，则停止
   if (parent && context.source.startsWith(`</${parent.tag}`)) {
     return true
+  } */
+  // 与父级节点栈内所有节点做比较
+  for (let i = ancestors.length - 1; i >= 0; --i) {
+    // 只要栈中存在于当前结束标签同名的节点，就停止状态机
+    if (context.source.startsWith(`</${ancestors[i].tag}`)) {
+      return true
+    }
   }
 }
 
