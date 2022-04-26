@@ -184,22 +184,26 @@ export function parseChildren (context, ancestors) {
   while (!isEnd(context, ancestors)) {
     let node
     // 只有 DATA 模式和 RCDATA 模式才支持插值节点的解析
-    if (mode === TextModes.DATA && source[0] === '<') {
-      if (source[i] === '!') {
-        if (source.startsWith('<!--')) {
-          // 注释
-          node = parseComment(context)
-        } else if (source.startsWith('<![CDATA[')) {
-          node = parseCDATA(context, ancestors)
+    if (mode === TextModes.DATA || mode === TextModes.RCDATA) {
+      if (mode === TextModes.DATA && source[0] === '<') {
+        if (source[i] === '!') {
+          if (source.startsWith('<!--')) {
+            // 注释
+            node = parseComment(context)
+          } else if (source.startsWith('<![CDATA[')) {
+            node = parseCDATA(context, ancestors)
+          }
+        } else if (source[i] === '/') {
+          // 结束标签，此时应该抛出错误，因为缺少与之对应的开始标签
+          console.error('无效的结束标签')
+          continue
+        } else if (/a-z/i.test(source[1])) {
+          node = parseElement(context, ancestors)
         }
-      } else if (source[i] === '/') {
-        // 结束标签
-      } else if (/a-z/i.test(source[1])) {
-        node = parseElement(context, ancestors)
+      } else if (source.startsWith('{{')) {
+        // 解析插值
+        node = parseInterpolation(context)
       }
-    } else if (source.startsWith('{{')) {
-      // 解析插值
-      node = parseInterpolation(context)
     }
 
     // node 不存在，说明处于其他模式，即非 DATA 模式且非 RCDATA 模式
@@ -232,7 +236,7 @@ export function isEnd(context, ancestors) {
   // 获取父级标签节点
   const parent = ancestors[ancestors.length - 1]
   // 如果遇到结束标签，并且该标签与父级标签节点同名，则停止
-  if (parent && context.startsWith(`</${parent.tag}`)) {
+  if (parent && context.source.startsWith(`</${parent.tag}`)) {
     return true
   }
 }
