@@ -163,7 +163,21 @@ export function parse (str) {
   // 定义上下文对象
   const context = {
     source: str, // 模板内容，用于在解析过程中进行消费
-    mode: TextModes.DATA // 解析器当前处于文本模式，初始模式为 DATA
+    mode: TextModes.DATA, // 解析器当前处于文本模式，初始模式为 DATA
+    // advanceBy 函数用来消费指定数量的字符，介绍苏一个数字作为参数
+    advanceBy(num) {
+      // 根据给定字符数 num ，截取位置 num 后的模板内容，并替换当前模板内容
+      context.source = context.source.slice(num)
+    },
+    // 无论是开始标签还是结束标签，都可能存在无用的空白字符，例如 <div >
+    advaceSpaces() {
+      // 匹配空白字符串
+      const match = /^[\t\r\n\f ]+/.exec(context.source)
+      if (match) {
+        // 调用 advanceBy 函数消费空白字符
+        context.advanceBy(match[0].length)
+      }
+    },
   }
 
   // 调用 parseChildren 函数进行解析，返回解析后得到的子节点
