@@ -164,7 +164,7 @@ export function parse (str) {
   const context = {
     source: str, // 模板内容，用于在解析过程中进行消费
     mode: TextModes.DATA, // 解析器当前处于文本模式，初始模式为 DATA
-    // advanceBy 函数用来消费指定数量的字符，介绍苏一个数字作为参数
+    // advanceBy 函数用来消费指定数量的字符，介接收一个数字作为参数
     advanceBy(num) {
       // 根据给定字符数 num ，截取位置 num 后的模板内容，并替换当前模板内容
       context.source = context.source.slice(num)
@@ -249,6 +249,36 @@ export function parseElement (context, ancestors) {
     console.error(`${element.tag} 标签缺少闭合标签`)
   }
   return element
+}
+
+// 由于 parseTag 既用来处理开始标签，也用来处理结束标签，因此我们设计第二个参数 type
+// 用来代表当前处理的是开始标签还是结束标签， type 的默认值为 'start', 默认作为开始标签处理
+export function parseTag(context, type = 'start') {
+  const { advanceBy, advaceSpaces } = context
+  const match = type === 'start'
+    // 匹配开始标签
+    ? /^<([a-z][^\t\r\n\f />]*)/i.exec(context.source)
+    // 匹配结束标签
+    : /^<\/([a-z][^\t\r\n\f />]*)/i.exec(context.source)
+  // 匹配成功后，正则表达式的第一个捕获组的值就是标签名称
+  const tag = match[1]
+  // 消费正则表达式的全部内容，例如 '<div' 这段内容
+  advanceBy(match[0].length)
+  // 消费标签中无用的空白字符
+  advaceSpaces()
+  // 消费匹配的内容后，如果字符串以 '/>' 开头，则说明这是一个自闭和标签
+  const isSelfClosing = context.source.startsWith('/>')
+  // 如果是自闭和标签，则消费 '/>', 否则消费'>'
+  advanceBy(isSelfClosing ? 2 : 1)
+
+  // 返回标签节点
+  return {
+    type: 'Element',
+    tag,
+    props: [],
+    children: [],
+    isSelfClosing,
+  }
 }
 
 export function isEnd(context, ancestors) {
