@@ -298,6 +298,10 @@ export function parseTag(context, type = 'start') {
 }
 
 export function parseAttributes (context) {
+  const {
+    advanceBy,
+    advaceSpaces,
+  } = context
   // 用来存储解析过程中产生的属性节点和指令节点
   const props = []
   // 开启 while 循环，不断消费模板内容，直至遇到标签的结束部分为止
@@ -305,7 +309,38 @@ export function parseAttributes (context) {
     !context.source.startsWith('>') &&
     !context.source.startsWith('/>')
   ) {
-
+    // 改正则用于匹配属性名称
+    const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)
+    // 得到属性名称
+    const name = match[0]
+    advanceBy(name.length)
+    advaceSpaces()
+    advanceBy(1)
+    advaceSpaces()
+    let value = ''
+    const quote = context.source[0]
+    const isQuoted = quote === '"' || quote === "'"
+    if (isQuoted) {
+      advanceBy(1)
+      const endQuoteIndex = context.source.indexOf(quote)
+      if (endQuoteIndex > -1) {
+        value = context.source.slice(0, endQuoteIndex)
+        advanceBy(value.length)
+        advanceBy(1)
+      } else {
+        console.error('缺少引号')
+      }
+    } else {
+      const match = /^[^\t\r\n\f >]+/.exec(context.source)
+      value = match[0]
+      advanceBy(value.length)
+    }
+    advaceSpaces()
+    props.push({
+      type: 'Attribute',
+      name,
+      value,
+    })
   }
   // 返回解析结果
   return props
