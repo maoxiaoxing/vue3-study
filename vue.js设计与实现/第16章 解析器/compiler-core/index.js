@@ -313,6 +313,7 @@ export function parseAttributes (context) {
     const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)
     // 得到属性名称
     const name = match[0]
+    // 消费属性名称与等于号之间的空白字符
     advanceBy(name.length)
     advaceSpaces()
     advanceBy(1)
