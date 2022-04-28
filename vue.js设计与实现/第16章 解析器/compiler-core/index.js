@@ -279,6 +279,9 @@ export function parseTag(context, type = 'start') {
   advanceBy(match[0].length)
   // 消费标签中无用的空白字符
   advaceSpaces()
+  // 调用 parseAttributes 函数完成属性与指令的解析，并得到 props 数组
+  // props 数组是由指令节点与属性节点共同组成的数组
+  const props = parseAttributes(context)
   // 消费匹配的内容后，如果字符串以 '/>' 开头，则说明这是一个自闭和标签
   const isSelfClosing = context.source.startsWith('/>')
   // 如果是自闭和标签，则消费 '/>', 否则消费'>'
@@ -288,10 +291,24 @@ export function parseTag(context, type = 'start') {
   return {
     type: 'Element',
     tag,
-    props: [],
+    props,
     children: [],
     isSelfClosing,
   }
+}
+
+export function parseAttributes (context) {
+  // 用来存储解析过程中产生的属性节点和指令节点
+  const props = []
+  // 开启 while 循环，不断消费模板内容，直至遇到标签的结束部分为止
+  while (
+    !context.source.startsWith('>') &&
+    !context.source.startsWith('/>')
+  ) {
+
+  }
+  // 返回解析结果
+  return props
 }
 
 export function isEnd(context, ancestors) {
