@@ -200,14 +200,14 @@ export function parseChildren (context, ancestors) {
     // 只有 DATA 模式和 RCDATA 模式才支持插值节点的解析
     if (mode === TextModes.DATA || mode === TextModes.RCDATA) {
       if (mode === TextModes.DATA && source[0] === '<') {
-        if (source[i] === '!') {
+        if (source[1] === '!') {
           if (source.startsWith('<!--')) {
             // 注释
             node = parseComment(context)
           } else if (source.startsWith('<![CDATA[')) {
             node = parseCDATA(context, ancestors)
           }
-        } else if (source[i] === '/') {
+        } else if (source[1] === '/') {
           // 结束标签，此时应该抛出错误，因为缺少与之对应的开始标签
           console.error('无效的结束标签')
           continue
