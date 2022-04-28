@@ -238,6 +238,19 @@ export function parseElement (context, ancestors) {
   // 解析开始标签
   const element = parseTag(context)
   if (element.isSelfClosing) return element
+
+  // 切换到正确的文本模式
+  if (element.tag === 'textarea' || element.tag === 'title') {
+    // 如果 parseTag 解析到的标签是 <textarea> 或者 <title>
+    context.mode = TextModes.RCDATA
+  } else if (/style|xmp|iframe|noembed|noframes|noscript/.test(element.tag)) {
+    // 如果解析到的是 <style> <xmp> <iframe> 等则切换到 RAWTEXT 模式
+    context.mode = TextModes.RAWTEXT
+  } else {
+    // 否则切换到 DATA 模式
+    context.mode = TextModes.DATA
+  }
+
   ancestors.push(element)
   // 递归调用 parseChildren 函数进行标签子节点的解析
   element.children = parseChildren(context, ancestors)
