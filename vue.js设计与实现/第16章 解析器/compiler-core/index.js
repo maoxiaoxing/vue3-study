@@ -364,6 +364,35 @@ export function parseAttributes (context) {
   return props
 }
 
+export function parseText (context) {
+  // endIndex 为内容的结尾索引，默认将真个模板剩余的内容都作为文本内容
+  let endIndex = context.source.length
+  // 寻找字符 < 位置索引
+  const ltIndex = context.source.indexOf('<')
+  // 寻找定界符 {{ 的位置索引
+  const delimiterIndex = context.source.indexOf('{{')
+
+  // 取 ltIndex 和当前 endIndex 中较小的一个作为新的结尾索引
+  if (ltIndex > -1 && ltIndex < endIndex) {
+    endIndex = ltIndex
+  }
+  // 取 delimiterIndex 和当前 endIndex 中较小的一个作为新的结尾索引
+  if (delimiterIndex > -1 && delimiterIndex < endIndex) {
+    endIndex = delimiterIndex
+  }
+  // 此时 endIndex 是最终的文本诶荣结尾索引，调用 slice 函数截取文本内容
+  const content = context.source.slice(0, endIndex)
+  // 消耗文本内容
+  context.advanceBy(content.length)
+  // 返回文本节点
+  return {
+    // 节点类型
+    type: 'Text',
+    // 文本内容
+    context,
+  }
+}
+
 export function isEnd(context, ancestors) {
   // 当模板内容解析完毕后，停止
   if (!context.source) return true
