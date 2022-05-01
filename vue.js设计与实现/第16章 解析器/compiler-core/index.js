@@ -552,6 +552,17 @@ export function transformRoot(node) {
   }
 }
 
+// 第一个参数作为被解码的内容
+// 第二个参数是一个布尔值，代表文本内容是否作为属性值
+function decodeHtml (rawText, asAttr = false) {
+  let offset = 0
+  const end = rawText.length
+  // 经过解码后的文本作为返回值被返回
+  let decodeText = ''
+  // 引用表中实体名称的最大长度
+  let maxCRNameLength = 0
+}
+
 // 创建 StringLiteral 节点
 export function createStringLiteral(value) {
   return {
