@@ -390,6 +390,7 @@ export function parseText (context) {
     type: 'Text',
     // 文本内容
     context,
+    content: decodeHtml(content),
   }
 }
 
