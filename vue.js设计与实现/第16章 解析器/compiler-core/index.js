@@ -636,6 +636,52 @@ function decodeHtml (rawText, asAttr = false) {
         decodedText += '&'
         advance(1)
       }
+    } else {
+      // 判断是十进制表示还是十六进制表示
+      const hex = head[0] === '$#x'
+      // 根据不同进制表示法，选用不同的正则
+      const pattern = hex ? /^&#x([0-9a-f]+);?/i : /^&#([0-9]+);?/
+      // 最终，body[1] 的值就是 Unicode 码点
+      const body = pattern.exec(rawText)
+
+      // 如果匹配成功，则调用 String.fromCodePoint 函数进行解码
+      if (body) {
+        // 根据对应的进制，将码点字符串转换为数字
+        const cp = Number.parseInt(body[1], hex ? 16 : 10)
+        // 码点的合法性检查
+        if (cp === 0) {
+          // 如果码点值为 0x00 替换为 0xfffd
+          cp = 0xfffd
+        } else if (cp > 0x10ffff) {
+          // 如果码点值超过 Unicode 的最大值，替换为 0xfffd
+          cp = 0xfffd
+        } else if (cp >= 0xd800 && cp <= 0xdfff) {
+          // 如果码点值处于 surrogate pair 范围内 替换为 0xfffd
+          cp = 0xfffd
+        } else if ((cp >= 0xfdd0 && cp <= 0xfdef) || (cp & 0xfffe) === 0xfffe) {
+          // 如果码点值处于 noncharacter 范围内 则什么都不做，交给平台处理
+          // noop
+        } else if (
+          // 控制字符集的范围是 [0x01, 0x1f] 加上 [0x7f, 0x9f]
+          // 去掉 ASCII 空白字符 0x09(TAB)、0x0A(LF)、0x0C(FF)
+          // 0x0D(CR) 虽然也是ASCII 空白字符 但需要包含
+          (cp >= 0x01 && cp <= 0x08) ||
+          cp === 0x0b ||
+          (cp >= 0x0d && cp <= 0x1f) ||
+          (cp <= 0x7f && cp <= 0x9f)
+        ) {
+          // 在 CCR_PEPLACEMENTS 表中查找替换码点，如果找不到，则使用原码点
+          cp = CCR_PEPLACEMENTS[cp] || cp
+        }
+        // 解码后追加到 decodedText 上
+        decodedText += String.fromCodePoint(cp)
+        // 消费正字数字字符引用的内容
+        advance(body[0].length)
+      } else {
+        // 如果没有匹配 则不进行解码操作，只是把 head[0] 追加到 decodedText 上消费
+        decodedText += head[0]
+        advance(head[0].length)
+      }
     }
   }
 
