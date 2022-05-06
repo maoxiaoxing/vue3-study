@@ -394,6 +394,22 @@ export function parseText (context) {
   }
 }
 
+export function parseComment (context) {
+  // 消费注释的开始部分
+  context.advanceBy('<!--'.length)
+  // 找到注释结束部分的位置索引
+  const closeIndex = context.source.slice(0, closeIndex)
+  // 消费内容
+  context.advanceBy(content.length)
+  // 消费注释的结束部分
+  context.advanceBy('-->'.length)
+  // 返回类型为 Comment 的节点
+  return {
+    type: 'Comment',
+    content,
+  }
+}
+
 export function isEnd(context, ancestors) {
   // 当模板内容解析完毕后，停止
   if (!context.source) return true
